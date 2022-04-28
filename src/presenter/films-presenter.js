@@ -9,7 +9,7 @@ import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmTopRateView from '../view/film-top-rate-view';
 import FilmMostCommentView from '../view/film-most-comment-view';
 
-const FILMS_NUMBERS = 5;
+const FILMS_NUMBER = 5;
 
 export default class FilmsPresenter {
   init = (container) => {
@@ -27,7 +27,7 @@ export default class FilmsPresenter {
     render(new FilmTopRateView(), this.filmSection.getElement());
     render(new FilmMostCommentView(), this.filmSection.getElement());
 
-    for (let i = 0; i < FILMS_NUMBERS; i++) {
+    for (let i = 0; i < FILMS_NUMBER; i++) {
       render(new FilmItemView(), this.filmListContainer.getElement());
     }
   };
