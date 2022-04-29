@@ -10,5 +10,5 @@ const filmPresenter = new FilmsPresenter();
 
 
 render(new RateView(), header);
-render(new FilmDetailsView(), footer, RenderPosition.AFTEREND);
+// render(new FilmDetailsView(), footer, RenderPosition.AFTEREND);
 filmPresenter.init(mainContainer);

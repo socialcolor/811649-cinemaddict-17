@@ -23,8 +23,8 @@ export default class FilmsPresenter {
     render(new FilmListTitleView(), this.filmList.getElement());
     render(this.filmListContainer, this.filmList.getElement());
     render(new ShowMoreButtonView(), this.filmList.getElement());
-    render(new FilmMostView('MostRated'), this.filmSection.getElement());
-    render(new FilmMostView('MostCommented'), this.filmSection.getElement());
+    render(new FilmMostView('Top rated'), this.filmSection.getElement());
+    render(new FilmMostView('MoMost commented'), this.filmSection.getElement());
 
     for (let i = 0; i < FILMS_NUMBER; i++) {
       render(new FilmItemView(), this.filmListContainer.getElement());
