@@ -1,6 +1,6 @@
 import {getRandomInteger} from '../utils';
 import dayjs from 'dayjs';
-import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS} from '../const';
+import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS, FILM_LENGTH} from '../const';
 
 const generateTitle = () => {
   const name = [
@@ -44,6 +44,7 @@ const generateDescription = () => {
 
 const generateComment = () => (
   {
+    filmId: getRandomInteger(0, FILM_LENGTH - 1),
     author: AUTHORS_COMMENT[getRandomInteger(0, AUTHORS_COMMENT.length - 1)],
     comment:COMMENTS[getRandomInteger(0, COMMENTS.length - 1)],
     date: dayjs().subtract(getRandomInteger(1, 100, 'day')).format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
@@ -51,9 +52,8 @@ const generateComment = () => (
   });
 
 
-const generateFilm = (comments) => (
+const generateFilm = () => (
   {
-    comments: comments,
     filmInfo: {
       title: generateTitle(),
       alternativeTitle: generateTitle(),

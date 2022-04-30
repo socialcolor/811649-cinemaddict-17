@@ -16,7 +16,7 @@ export default class FilmsPresenter {
     this.container = container;
     this.filmsModel = filmsModel;
     this.films = [...filmsModel.getFilms()];
-
+    // this.comments = filmsModel.getComments();
     this.filmSection = new FilmSectionView();
     this.filmList = new FilmListView();
     this.filmListContainer = new FilmListContainerView();
