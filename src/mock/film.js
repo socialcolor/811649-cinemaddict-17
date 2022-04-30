@@ -43,7 +43,7 @@ const generateDuration = () => {
 };
 
 const generateGenre = () => {
-  const genre = [
+  const genres = [
     'Comedy',
     'Drama',
     'Fantasy',
@@ -53,9 +53,9 @@ const generateGenre = () => {
     'Thriller',
   ];
 
-  const randomIndex = getRandomInteger(0, genre.length -1);
+  const length = getRandomInteger(1, genres.length);
 
-  return genre[randomIndex];
+  return genres.slice(0, length);
 };
 
 const generateDescription = () => {
