@@ -44,11 +44,12 @@ const generateDescription = () => {
 
 const generateComment = () => (
   {
-    author: getRandomInteger(0, AUTHORS_COMMENT.length - 1),
-    comment: getRandomInteger(0, COMMENTS.length - 1),
-    date: dayjs().subtract(getRandomInteger(1, 100, 'day').format('YYYY-MM-DDTHH:mm:ssZ[Z]')),
-    emotion: getRandomInteger(0, EMOTIONS.length - 1),
+    author: AUTHORS_COMMENT[getRandomInteger(0, AUTHORS_COMMENT.length - 1)],
+    comment:COMMENTS[getRandomInteger(0, COMMENTS.length - 1)],
+    date: dayjs().subtract(getRandomInteger(1, 100, 'day')).format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+    emotion: EMOTIONS[getRandomInteger(0, EMOTIONS.length - 1)],
   });
+
 
 const generateFilm = (comments) => (
   {
