@@ -1,6 +1,6 @@
 import {getRandomInteger} from '../utils';
 import dayjs from 'dayjs';
-import {DIRTCTORS, GENRES, COUNTRIES, AUTHORS_COMMENT, COMMENTS, EMOTIONS} from '../const';
+import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS} from '../const';
 
 const generateTitle = () => {
   const name = [
@@ -19,19 +19,9 @@ const generateTitle = () => {
 };
 
 const generatePoster = () => {
-  const poster = [
-    'made-for-each-other.png',
-    'popeye-meets-sinbad.png',
-    'sagebrush-trail.jpg',
-    'santa-claus-conquers-the-martians.jpg',
-    'the-dance-of-life.jpg',
-    'the-great-flamarion.jpg',
-    'the-man-with-the-golden-arm.jpg',
-  ];
+  const randomIndex = getRandomInteger(0, POSTERS.length -1);
 
-  const randomIndex = getRandomInteger(0, poster.length -1);
-
-  return poster[randomIndex];
+  return POSTERS[randomIndex];
 };
 
 const generateDuration = () => {
@@ -52,18 +42,16 @@ const generateDescription = () => {
   return description.length <= 140 ? description.replace(/ $/, '') : description.replace(/ $/, '..');
 };
 
-const generateComment = (id) => (
+const generateComment = () => (
   {
-    id: id,
     author: getRandomInteger(0, AUTHORS_COMMENT.length - 1),
     comment: getRandomInteger(0, COMMENTS.length - 1),
     date: dayjs().subtract(getRandomInteger(1, 100, 'day').format('YYYY-MM-DDTHH:mm:ssZ[Z]')),
     emotion: getRandomInteger(0, EMOTIONS.length - 1),
   });
 
-const generateFilm = (id, comments) => (
+const generateFilm = (comments) => (
   {
-    id: id,
     comments: comments,
     filmInfo: {
       title: generateTitle(),
@@ -78,7 +66,7 @@ const generateFilm = (id, comments) => (
         releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
       },
       runtime: generateDuration(),
-      genre: GENRES.slice(0,  getRandomInteger(1, GENRES.length)),
+      genre: GENRES[getRandomInteger(1, 3)],
       description: generateDescription(),
       comments: getRandomInteger(0, 10),
       userDetails: {

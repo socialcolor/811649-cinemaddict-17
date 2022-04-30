@@ -8,11 +8,12 @@ import FilmItemView from '../view/film-item-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 
-const FILMS_NUMBER = 5;
-
 export default class FilmsPresenter {
-  init = (container) => {
+  init = (container, filmsModel) => {
     this.container = container;
+    this.filmsModel = filmsModel;
+    this.films = [...filmsModel.getFilms()];
+
     this.filmSection = new FilmSectionView();
     this.filmList = new FilmListView();
     this.filmListContainer = new FilmListContainerView();
@@ -24,10 +25,10 @@ export default class FilmsPresenter {
     render(this.filmListContainer, this.filmList.getElement());
     render(new ShowMoreButtonView(), this.filmList.getElement());
     render(new FilmMostView('Top rated'), this.filmSection.getElement());
-    render(new FilmMostView('MoMost commented'), this.filmSection.getElement());
+    render(new FilmMostView('Most commented'), this.filmSection.getElement());
 
-    for (let i = 0; i < FILMS_NUMBER; i++) {
-      render(new FilmItemView(), this.filmListContainer.getElement());
+    for (let i = 0; i < this.films.length; i++) {
+      render(new FilmItemView(this.films[i]), this.filmListContainer.getElement());
     }
   };
 }

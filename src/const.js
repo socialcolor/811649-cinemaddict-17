@@ -13,9 +13,6 @@ const GENRES = [
   'Drama',
   'Fantasy',
   'Horror',
-  'Mystery',
-  'Romance',
-  'Thriller',
 ];
 
 const COUNTRIES = [
@@ -23,6 +20,16 @@ const COUNTRIES = [
   'England',
   'France',
   'Italy',
+];
+
+const POSTERS = [
+  'made-for-each-other.png',
+  'popeye-meets-sinbad.png',
+  'sagebrush-trail.jpg',
+  'santa-claus-conquers-the-martians.jpg',
+  'the-dance-of-life.jpg',
+  'the-great-flamarion.jpg',
+  'the-man-with-the-golden-arm.jpg',
 ];
 
 const AUTHORS_COMMENT = [
@@ -46,4 +53,4 @@ const EMOTIONS = [
   'puke',
   'angry'
 ];
-export {DIRTCTORS, GENRES, COUNTRIES, AUTHORS_COMMENT, COMMENTS, EMOTIONS};
+export {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS};
