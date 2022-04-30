@@ -4,7 +4,7 @@ const getRandomInteger = (a = 0, b = 1, fraction = 0) => {
   if(fraction === 0) {
     return Math.floor(lower + Math.random() * (upper - lower + 1));
   }
-  return Math.floor(lower + Math.random() * (upper - lower + 1)).toFixed(fraction);
+  return (lower + Math.random() * (upper - lower + 1)).toFixed(fraction);
 };
 
 export {getRandomInteger};

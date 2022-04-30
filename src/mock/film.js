@@ -39,7 +39,7 @@ const generateDescription = () => {
     description += `${sentences[getRandomInteger(0, sentences.length - 1)]} `;
   }
 
-  return description.length <= 140 ? description.replace(/ $/, '') : description.replace(/ $/, '..');
+  return description.replace(/ $/, '');
 };
 
 const generateComment = () => (
@@ -55,6 +55,7 @@ const generateFilm = (comments) => (
     comments: comments,
     filmInfo: {
       title: generateTitle(),
+      alternativeTitle: generateTitle(),
       rate: getRandomInteger(0, 10, 1),
       poster: generatePoster(),
       ageRating: getRandomInteger(0, 18),
@@ -62,7 +63,7 @@ const generateFilm = (comments) => (
       writers: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
       actors: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
       release: {
-        date: dayjs().subtract(getRandomInteger(1, 11000), 'day').format('DD MMM YYYY'),
+        date: dayjs().subtract(getRandomInteger(1, 11000), 'day').format('DD MMMM YYYY'),
         releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
       },
       runtime: generateDuration(),

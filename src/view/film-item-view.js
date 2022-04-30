@@ -1,21 +1,23 @@
 import {createElement} from '../render';
 
 const createFilmItemTemplate = (film) => {
-  const watchlist = film.filmInfo.userDetails.watchlist === true ? 'film-card__controls-item--active' : '';
-  const alreadyWatched = film.filmInfo.userDetails.alreadyWatched === true ? 'film-card__controls-item--active' : '';
-  const favorite = film.filmInfo.userDetails.favorite === true ? 'film-card__controls-item--active' : '';
+  const {filmInfo} = film;
+  const watchlist = filmInfo.userDetails.watchlist === true ? 'film-card__controls-item--active' : '';
+  const alreadyWatched = filmInfo.userDetails.alreadyWatched === true ? 'film-card__controls-item--active' : '';
+  const favorite = filmInfo.userDetails.favorite === true ? 'film-card__controls-item--active' : '';
+  const description = filmInfo.description.length <= 140 ? filmInfo.description.replace(/ $/, '') : `${filmInfo.description.substring(0, 139)  }...`;
 
   return `<article class="film-card">
      <a class="film-card__link">
-       <h3 class="film-card__title">${film.filmInfo.title}</h3>
-       <p class="film-card__rating">${film.filmInfo.rate}</p>
+       <h3 class="film-card__title">${filmInfo.title}</h3>
+       <p class="film-card__rating">${filmInfo.rate}</p>
        <p class="film-card__info">
-         <span class="film-card__year">${film.filmInfo.release.date}</span>
-         <span class="film-card__duration">${film.filmInfo.runtime}</span>
-         <span class="film-card__genre">${film.filmInfo.genre}</span>
+         <span class="film-card__year">${filmInfo.release.date}</span>
+         <span class="film-card__duration">${filmInfo.runtime}</span>
+         <span class="film-card__genre">${filmInfo.genre}</span>
        </p>
-       <img src="./images/posters/${film.filmInfo.poster}" alt="" class="film-card__poster">
-       <p class="film-card__description">${film.filmInfo.description}</p>
+       <img src="./images/posters/${filmInfo.poster}" alt="" class="film-card__poster">
+       <p class="film-card__description">${description}</p>
        <span class="film-card__comments">5 comments</span>
      </a>
      <div class="film-card__controls">
