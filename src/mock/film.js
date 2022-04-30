@@ -1,6 +1,8 @@
 import {getRandomInteger} from '../utils';
+import dayjs from 'dayjs';
+import {DIRTCTORS, GENRES, COUNTRIES, AUTHORS_COMMENT, COMMENTS, EMOTIONS} from '../const';
 
-const generateName = () => {
+const generateTitle = () => {
   const name = [
     'Made for each other',
     'Popeye meets sinbad',
@@ -32,30 +34,10 @@ const generatePoster = () => {
   return poster[randomIndex];
 };
 
-const generateYear = () => getRandomInteger(1950, 2022);
-
-const generateRate = () => getRandomInteger(0, 10);
-
 const generateDuration = () => {
   const hours = getRandomInteger(1, 2);
   const minutes = getRandomInteger(0, 60);
   return `${hours}h ${minutes}m`;
-};
-
-const generateGenre = () => {
-  const genres = [
-    'Comedy',
-    'Drama',
-    'Fantasy',
-    'Horror',
-    'Mystery',
-    'Romance',
-    'Thriller',
-  ];
-
-  const length = getRandomInteger(1, genres.length);
-
-  return genres.slice(0, length);
 };
 
 const generateDescription = () => {
@@ -70,16 +52,43 @@ const generateDescription = () => {
   return description.length <= 140 ? description.replace(/ $/, '') : description.replace(/ $/, '..');
 };
 
-export const generateFilm = () => (
+const generateComment = (id) => (
   {
-    poster: generatePoster(),
-    name: generateName(),
-    rate: generateRate(),
-    year: generateYear(),
-    duration:generateDuration(),
-    genre: generateGenre(),
-    description: generateDescription(),
-    comments: getRandomInteger(0, 10),
+    id: id,
+    author: getRandomInteger(0, AUTHORS_COMMENT.length - 1),
+    comment: getRandomInteger(0, COMMENTS.length - 1),
+    date: dayjs().subtract(getRandomInteger(1, 100, 'day').format('YYYY-MM-DDTHH:mm:ssZ[Z]')),
+    emotion: getRandomInteger(0, EMOTIONS.length - 1),
+  });
+
+const generateFilm = (id, comments) => (
+  {
+    id: id,
+    comments: comments,
+    filmInfo: {
+      title: generateTitle(),
+      rate: getRandomInteger(0, 10, 1),
+      poster: generatePoster(),
+      ageRating: getRandomInteger(0, 18),
+      director: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
+      writers: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
+      actors: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
+      release: {
+        date: dayjs().subtract(getRandomInteger(1, 11000), 'day').format('DD MMM YYYY'),
+        releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
+      },
+      runtime: generateDuration(),
+      genre: GENRES.slice(0,  getRandomInteger(1, GENRES.length)),
+      description: generateDescription(),
+      comments: getRandomInteger(0, 10),
+      userDetails: {
+        watchlist: Boolean(getRandomInteger(0, 1)),
+        alreadyWatched: Boolean(getRandomInteger(0, 1)),
+        watchingDate: dayjs().subtract(getRandomInteger(1, 100), 'day').format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+        favorite: Boolean(getRandomInteger(0, 1)),
+      }
+    }
   }
 );
 
+export {generateFilm, generateComment};
