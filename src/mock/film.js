@@ -1,6 +1,6 @@
 import {getRandomInteger} from '../utils';
 import dayjs from 'dayjs';
-import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS, FILM_LENGTH} from '../const';
+import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS, FILM_LENGTH, COMMENTS_LENGTH} from '../const';
 
 const generateTitle = () => {
   const name = [
@@ -42,43 +42,67 @@ const generateDescription = () => {
   return description.replace(/ $/, '');
 };
 
-const generateComment = () => (
-  {
-    filmId: getRandomInteger(0, FILM_LENGTH - 1),
-    author: AUTHORS_COMMENT[getRandomInteger(0, AUTHORS_COMMENT.length - 1)],
-    comment:COMMENTS[getRandomInteger(0, COMMENTS.length - 1)],
-    date: dayjs().subtract(getRandomInteger(1, 100, 'day')).format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
-    emotion: EMOTIONS[getRandomInteger(0, EMOTIONS.length - 1)],
-  });
-
-
-const generateFilm = () => (
-  {
-    filmInfo: {
-      title: generateTitle(),
-      alternativeTitle: generateTitle(),
-      rate: getRandomInteger(0, 10, 1),
-      poster: generatePoster(),
-      ageRating: getRandomInteger(0, 18),
-      director: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
-      writers: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
-      actors: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
-      release: {
-        date: dayjs().subtract(getRandomInteger(1, 11000), 'day').format('DD MMMM YYYY'),
-        releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
-      },
-      runtime: generateDuration(),
-      genre: GENRES[getRandomInteger(1, 3)],
-      description: generateDescription(),
-      comments: getRandomInteger(0, 10),
-      userDetails: {
-        watchlist: Boolean(getRandomInteger(0, 1)),
-        alreadyWatched: Boolean(getRandomInteger(0, 1)),
-        watchingDate: dayjs().subtract(getRandomInteger(1, 100), 'day').format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
-        favorite: Boolean(getRandomInteger(0, 1)),
+const generateFilms = (length) => {
+  const Films = []; //Почему то линтер тут ругается что имя с маленькой буквы
+  for (let i = 0; i < length; i++) {
+    Films.push(
+      {
+        id: i,
+        comments: [],
+        filmInfo: {
+          title: generateTitle(),
+          alternativeTitle: generateTitle(),
+          rate: getRandomInteger(0, 10, 1),
+          poster: generatePoster(),
+          ageRating: getRandomInteger(0, 18),
+          director: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
+          writers: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
+          actors: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
+          release: {
+            date: dayjs().subtract(getRandomInteger(1, 11000), 'day').format('DD MMMM YYYY'),
+            releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
+          },
+          runtime: generateDuration(),
+          genre: GENRES[getRandomInteger(1, 3)],
+          description: generateDescription(),
+          comments: getRandomInteger(0, 10),
+          userDetails: {
+            watchlist: Boolean(getRandomInteger(0, 1)),
+            alreadyWatched: Boolean(getRandomInteger(0, 1)),
+            watchingDate: dayjs().subtract(getRandomInteger(1, 100), 'day').format('YYYY-MM-DDTHH:mm:ssZ[Z]'),
+            favorite: Boolean(getRandomInteger(0, 1)),
+          }
+        }
       }
-    }
+    );
   }
-);
+  return Films;
+};
 
-export {generateFilm, generateComment};
+const generateComments = (length) => {
+  const Comments = []; //Почему то линтер тут ругается что имя с маленькой буквы
+  for(let i = 0; i < length; i++) {
+    Comments.push(
+      {
+        id: getRandomInteger(0, FILM_LENGTH - 1),
+        author: AUTHORS_COMMENT[getRandomInteger(0, AUTHORS_COMMENT.length - 1)],
+        comment:COMMENTS[getRandomInteger(0, COMMENTS.length - 1)],
+        date: dayjs().subtract(getRandomInteger(1, 100, 'day')).format('YYYY/MM/DD HH:mm'),
+        emotion: EMOTIONS[getRandomInteger(0, EMOTIONS.length - 1)],
+      }
+    );
+  }
+  return Comments;
+};
+
+const addCommentsInFilm = (film, comment) => {
+  for(let i = 0; i < comment.length; i++) {
+    film[comment[i].id].comments.push(i);
+  }
+};
+
+const films = generateFilms(FILM_LENGTH);
+const comments = generateComments(COMMENTS_LENGTH);
+addCommentsInFilm(films, comments);
+
+export {films, comments};

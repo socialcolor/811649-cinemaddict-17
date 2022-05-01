@@ -18,7 +18,7 @@ const createFilmItemTemplate = (film) => {
        </p>
        <img src="./images/posters/${filmInfo.poster}" alt="" class="film-card__poster">
        <p class="film-card__description">${description}</p>
-       <span class="film-card__comments">5 comments</span>
+       <span class="film-card__comments">${filmInfo.comments} comments</span>
      </a>
      <div class="film-card__controls">
        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist}" type="button">Add to watchlist</button>

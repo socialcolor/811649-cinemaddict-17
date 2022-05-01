@@ -8,6 +8,7 @@ import FilmItemView from '../view/film-item-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 import FilmDetailsView from '../view/film-details-view';
+import FilmCommentsView from '../view/film-details-comments.view';
 
 const footer = document.querySelector('.footer');
 
@@ -15,11 +16,13 @@ export default class FilmsPresenter {
   init = (container, filmsModel) => {
     this.container = container;
     this.filmsModel = filmsModel;
-    this.films = [...filmsModel.getFilms()];
-    // this.comments = filmsModel.getComments();
+    this.comments = filmsModel.getComments();
+    this.films = filmsModel.getFilms();
     this.filmSection = new FilmSectionView();
     this.filmList = new FilmListView();
     this.filmListContainer = new FilmListContainerView();
+    this.filmDetailsView = new FilmDetailsView(this.films[0]);
+    this.commentsContainer = this.filmDetailsView.getElement().querySelector('.film-details__comments-list');
 
     render(new FilterView(), this.container);
     render(this.filmSection, this.container);
@@ -29,7 +32,11 @@ export default class FilmsPresenter {
     render(new ShowMoreButtonView(), this.filmList.getElement());
     render(new FilmMostView('Top rated'), this.filmSection.getElement());
     render(new FilmMostView('Most commented'), this.filmSection.getElement());
-    render(new FilmDetailsView(this.films[0]), footer, RenderPosition.AFTEREND);
+    render(this.filmDetailsView, footer, RenderPosition.AFTEREND);
+
+    for(let i = 0; i < this.films[0].comments.length; i++) {
+      render(new FilmCommentsView(this.comments[i]), this.commentsContainer);
+    }
 
     for (let i = 0; i < this.films.length; i++) {
       render(new FilmItemView(this.films[i]), this.filmListContainer.getElement());

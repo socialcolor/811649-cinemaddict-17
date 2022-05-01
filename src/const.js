@@ -1,6 +1,6 @@
 const FILM_LENGTH = 10;
 
-const COMMENTS_LENGTH = 10;
+const COMMENTS_LENGTH = 30;
 
 const DIRTCTORS = [
   'Guillermo del Toro',
