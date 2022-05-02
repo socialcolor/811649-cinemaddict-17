@@ -35,7 +35,6 @@ const generateDescription = () => {
   return description.replace(/ $/, '');
 };
 
-
 const addCommentsInFilm = () => {
   const comments = [];
 
@@ -96,9 +95,5 @@ const generateComments = () => {
   }
   return commentsArray;
 };
-
-// const films = generateFilms();
-// const comments = generateComments();
-// addCommentsInFilm(films, comments);
 
 export {generateFilms, generateComments, addCommentsInFilm};
