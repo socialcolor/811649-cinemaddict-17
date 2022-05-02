@@ -1,6 +1,9 @@
-import {films, comments} from '../mock/film';
+export default class FilmModel {
+  constructor (films, comments) {
+    this.films = films;
+    this.comments = comments;
+  }
 
-export default class filmModel {
-  getFilms = () => films;
-  getComments = () => comments;
+  getFilms = () => this.films;
+  getComments = () => this.comments;
 }

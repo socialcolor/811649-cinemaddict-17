@@ -35,11 +35,12 @@ export default class FilmsPresenter {
     render(this.filmDetailsView, footer, RenderPosition.AFTEREND);
 
     for(let i = 0; i < this.films[0].comments.length; i++) {
-      render(new FilmCommentsView(this.comments[i]), this.commentsContainer);
+      const commentsId = this.comments[i];
+      render(new FilmCommentsView(commentsId), this.commentsContainer);
     }
 
-    for (let i = 0; i < this.films.length; i++) {
-      render(new FilmItemView(this.films[i]), this.filmListContainer.getElement());
+    for (const film of this.films) {
+      render(new FilmItemView(film), this.filmListContainer.getElement());
     }
   };
 }

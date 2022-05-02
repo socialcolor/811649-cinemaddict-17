@@ -1,10 +1,11 @@
 import {createElement} from '../render';
+import {formatDate, formatTime} from '../utils';
 
 const createFilmDetailsTmplate = (film) => {
-  const {filmInfo} = film;
-  const watchlist = filmInfo.userDetails.watchlist === true ? 'film-details__control-button--active' : '';
-  const alreadyWatched = filmInfo.userDetails.alreadyWatched === true ? 'film-details__control-button--active' : '';
-  const favorite = filmInfo.userDetails.favorite === true ? 'film-details__control-button--active' : '';
+  const {filmInfo, comments} = film;
+  const watchlist = filmInfo.userDetails.watchlist ? 'film-details__control-button--active' : '';
+  const alreadyWatched = filmInfo.userDetails.alreadyWatched  ? 'film-details__control-button--active' : '';
+  const favorite = filmInfo.userDetails.favorite ? 'film-details__control-button--active' : '';
 
   return  `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -46,11 +47,11 @@ const createFilmDetailsTmplate = (film) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${filmInfo.release.date}</td>
+                <td class="film-details__cell">${formatDate(filmInfo.release.date, 1, 1100, 'DD MMMM YYYY')}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${filmInfo.runtime}</td>
+                <td class="film-details__cell">${formatTime(filmInfo.runtime)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
@@ -78,7 +79,7 @@ const createFilmDetailsTmplate = (film) => {
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmInfo.comments}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
           </ul>

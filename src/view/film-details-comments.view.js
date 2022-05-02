@@ -1,7 +1,9 @@
 import {createElement} from '../render';
+import {formatDate} from '../utils';
 
 const createCommentsTmplate = (comments) => {
   const {author, comment, date, emotion} = comments;
+
   return  `
   <li class="film-details__comment">
     <span class="film-details__comment-emoji">
@@ -11,7 +13,7 @@ const createCommentsTmplate = (comments) => {
       <p class="film-details__comment-text">${comment}</p>
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
-        <span class="film-details__comment-day">${date}</span>
+        <span class="film-details__comment-day">${formatDate(date, 0, 100, 'YYYY/MM/DD HH:mm')}</span>
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>

@@ -1,24 +1,25 @@
 import {createElement} from '../render';
+import {formatDate, formatTime} from '../utils';
 
 const createFilmItemTemplate = (film) => {
-  const {filmInfo} = film;
+  const {filmInfo, comments} = film;
   const watchlist = filmInfo.userDetails.watchlist === true ? 'film-card__controls-item--active' : '';
   const alreadyWatched = filmInfo.userDetails.alreadyWatched === true ? 'film-card__controls-item--active' : '';
   const favorite = filmInfo.userDetails.favorite === true ? 'film-card__controls-item--active' : '';
-  const description = filmInfo.description.length <= 140 ? filmInfo.description.replace(/ $/, '') : `${filmInfo.description.substring(0, 139)  }...`;
+  const description = filmInfo.description.length > 140 ? `${filmInfo.description.substring(0, 139)  }...` : filmInfo.description;
 
   return `<article class="film-card">
      <a class="film-card__link">
        <h3 class="film-card__title">${filmInfo.title}</h3>
        <p class="film-card__rating">${filmInfo.rate}</p>
        <p class="film-card__info">
-         <span class="film-card__year">${filmInfo.release.date}</span>
-         <span class="film-card__duration">${filmInfo.runtime}</span>
+         <span class="film-card__year">${formatDate(filmInfo.release.date, 1, 1100, 'YYYY')}</span>
+         <span class="film-card__duration">${formatTime(filmInfo.runtime)}</span>
          <span class="film-card__genre">${filmInfo.genre}</span>
        </p>
        <img src="./images/posters/${filmInfo.poster}" alt="" class="film-card__poster">
        <p class="film-card__description">${description}</p>
-       <span class="film-card__comments">${filmInfo.comments} comments</span>
+       <span class="film-card__comments">${comments.length} comments</span>
      </a>
      <div class="film-card__controls">
        <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${watchlist}" type="button">Add to watchlist</button>
