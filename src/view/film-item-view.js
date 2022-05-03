@@ -3,9 +3,9 @@ import {formatDate, formatTime} from '../utils';
 
 const createFilmItemTemplate = (film) => {
   const {filmInfo, comments} = film;
-  const watchlist = filmInfo.userDetails.watchlist === true ? 'film-card__controls-item--active' : '';
-  const alreadyWatched = filmInfo.userDetails.alreadyWatched === true ? 'film-card__controls-item--active' : '';
-  const favorite = filmInfo.userDetails.favorite === true ? 'film-card__controls-item--active' : '';
+  const watchlist = filmInfo.userDetails.watchlist ? 'film-card__controls-item--active' : '';
+  const alreadyWatched = filmInfo.userDetails.alreadyWatched ? 'film-card__controls-item--active' : '';
+  const favorite = filmInfo.userDetails.favorite ? 'film-card__controls-item--active' : '';
   const description = filmInfo.description.length > 140 ? `${filmInfo.description.substring(0, 139)  }...` : filmInfo.description;
 
   return `<article class="film-card">
