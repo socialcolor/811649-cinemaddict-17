@@ -8,7 +8,7 @@ import FilmItemView from '../view/film-item-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 import FilmDetailsView from '../view/film-details-view';
-import FilmCommentsView from '../view/film-details-comments.view';
+import FilmDetailsCommentView from '../view/film-details-comments.view';
 
 const footer = document.querySelector('.footer');
 
@@ -36,7 +36,7 @@ export default class FilmsPresenter {
 
     for(let i = 0; i < this.films[0].comments.length; i++) {
       const commentsId = this.comments[i];
-      render(new FilmCommentsView(commentsId), this.commentsContainer);
+      render(new FilmDetailsCommentView(commentsId), this.commentsContainer);
     }
 
     for (const film of this.films) {

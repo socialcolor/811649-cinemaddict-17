@@ -1,4 +1,5 @@
 import {getRandomInteger} from '../utils';
+import dayjs from 'dayjs';
 import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS, FILM_LENGTH, COMMENTS_LENGTH} from '../const';
 
 const generateTitle = () => {
@@ -45,9 +46,9 @@ const addCommentsInFilm = () => {
 };
 
 const generateFilms = () => {
-  const filmsArray = [];
+  const films = [];
   for (let i = 0; i < FILM_LENGTH; i++) {
-    filmsArray.push(
+    films.push(
       {
         id: i,
         comments: addCommentsInFilm(),
@@ -61,7 +62,7 @@ const generateFilms = () => {
           writers: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
           actors: DIRTCTORS[getRandomInteger(0, DIRTCTORS.length - 1)],
           release: {
-            date: '2022-05-02T16:12:32.554Z',
+            date: dayjs().subtract(getRandomInteger(1, 11000), 'day').toISOString(),
             releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
           },
           runtime: getRandomInteger(70, 150),
@@ -70,30 +71,30 @@ const generateFilms = () => {
           userDetails: {
             watchlist: Boolean(getRandomInteger(0, 1)),
             alreadyWatched: Boolean(getRandomInteger(0, 1)),
-            watchingDate: '2022-05-02T16:12:32.554Z',
+            watchingDate: dayjs().subtract(getRandomInteger(1, 11000), 'day').toISOString(),
             favorite: Boolean(getRandomInteger(0, 1)),
           }
         }
       }
     );
   }
-  return filmsArray;
+  return films;
 };
 
 const generateComments = () => {
-  const commentsArray = [];
+  const comments = [];
   for(let i = 0; i < COMMENTS_LENGTH; i++) {
-    commentsArray.push(
+    comments.push(
       {
         id: getRandomInteger(0, FILM_LENGTH - 1),
         author: AUTHORS_COMMENT[getRandomInteger(0, AUTHORS_COMMENT.length - 1)],
         comment:COMMENTS[getRandomInteger(0, COMMENTS.length - 1)],
-        date: '2022-05-02T16:12:32.554Z',
+        date:  dayjs().subtract(getRandomInteger(1, 100, 'day')).toISOString(),
         emotion: EMOTIONS[getRandomInteger(0, EMOTIONS.length - 1)],
       }
     );
   }
-  return commentsArray;
+  return comments;
 };
 
 export {generateFilms, generateComments, addCommentsInFilm};

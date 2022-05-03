@@ -20,7 +20,7 @@ const createCommentsTmplate = (comments) => {
   </li>`;
 };
 
-export default class FilmCommentsView {
+export default class FilmDetailsCommentsView {
   constructor (comment) {
     this.comment = comment;
   }
