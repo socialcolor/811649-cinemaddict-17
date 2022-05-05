@@ -10,6 +10,8 @@ import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 import FilmDetailsView from '../view/film-details-view';
 import FilmDetailsCommentView from '../view/film-details-comments.view';
+import FilmListEmptyView from '../view/film-list-empty-view';
+import {FILM_COUNT_PER_STEP} from '../const';
 
 export default class FilmsPresenter {
   #mainSection = null;
@@ -18,8 +20,10 @@ export default class FilmsPresenter {
   #filmSection = new FilmSectionView();
   #filmList = new FilmListView();
   #filmListContainer = new FilmListContainerView();
+  #showMoreButton = new ShowMoreButtonView();
   #films = [];
   #comments = [];
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
   constructor (container, filmsModel) {
     this.#mainSection = container;
@@ -34,13 +38,26 @@ export default class FilmsPresenter {
 
   };
 
-  #renderfilm = (film) => {
+  #handleShowMoreButtonClick = (evt) => {
+    evt.preventDefault();
+    this.#films
+      .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
+      .forEach((film) => this.#renderFilm(film));
+
+    this.#renderedFilmCount += FILM_COUNT_PER_STEP;
+
+    if (this.#renderedFilmCount >= this.#films.length) {
+      this.#showMoreButton.element.remove();
+      this.#showMoreButton.removeElement();
+    }
+  };
+
+  #renderFilm = (film) => {
     const filmView = new FilmItemView(film);
     const filmDetailsView = new FilmDetailsView(film);
 
     const renderDetails = () => {
       render(filmDetailsView, document.body);
-      document.body.appendChild(filmDetailsView.getElement());
 
       const commentsContainer = filmDetailsView.element.querySelector('.film-details__comments-list');
 
@@ -89,12 +106,17 @@ export default class FilmsPresenter {
     render(this.#filmList, this.#filmSection.getElement());
     render(new FilmListTitleView(), this.#filmList.getElement());
     render(this.#filmListContainer, this.#filmList.getElement());
-    render(new ShowMoreButtonView(), this.#filmList.getElement());
     render(new FilmMostView('Top rated'), this.#filmSection.getElement());
     render(new FilmMostView('Most commented'), this.#filmSection.getElement());
+    //Я тут вернулся к обычному for, т.к. for of не получается использовать
+    for (let i = 0; i < Math.min(this.#films.length, FILM_COUNT_PER_STEP); i++) {
+      this.#renderFilm(this.#films[i]);
+    }
 
-    for (const film of this.#films) {
-      this.#renderfilm(film);
+    if(this.#films.length > FILM_COUNT_PER_STEP) {
+      render(this.#showMoreButton, this.#filmList.getElement());
+
+      this.#showMoreButton.element.addEventListener('click', this.#handleShowMoreButtonClick);
     }
   };
 
