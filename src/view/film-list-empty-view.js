@@ -1,14 +1,16 @@
 import {createElement} from '../render';
 
-const createFilmListEmptyTemplate = ({title}) => `<h2 class="films-list__title">${title}</h2>`;
+const createFilmListEmptyTemplate = (title) => `<h2 class="films-list__title">${title}</h2>`;
 
 export default class FilmListEmptyView {
+  #title = null;
+
   constructor (title) {
-    this.title = title;
+    this.#title = title;
   }
 
   getTemplate() {
-    return createFilmListEmptyTemplate({title: this.title});
+    return createFilmListEmptyTemplate(this.#title);
   }
 
   getElement() {
