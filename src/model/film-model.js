@@ -1,9 +1,17 @@
 export default class FilmModel {
+  #films;
+  #comments;
+
   constructor (films, comments) {
-    this.films = films;
-    this.comments = comments;
+    this.#films = films;
+    this.#comments = comments;
   }
 
-  getFilms = () => this.films;
-  getComments = () => this.comments;
+  get films() {
+    return this.#films;
+  }
+
+  get comments() {
+    return this.#comments;
+  }
 }

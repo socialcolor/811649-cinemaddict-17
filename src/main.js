@@ -9,9 +9,8 @@ const mainContainer = document.querySelector('.main');
 const films = generateFilms();
 const comments = generateComments();
 
-const filmPresenter = new FilmsPresenter();
 const filmsModel = new FilmModel(films, comments);
-
+const filmPresenter = new FilmsPresenter(mainContainer, filmsModel);
 render(new RateView(), header);
 
-filmPresenter.init(mainContainer, filmsModel);
+filmPresenter.init();
