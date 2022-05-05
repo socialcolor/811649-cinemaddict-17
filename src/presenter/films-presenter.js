@@ -1,4 +1,5 @@
 import {render} from '../render';
+import remove from '../remove';
 import FilterView from '../view/filter-view';
 import FilmSectionView from '../view/film-section-view';
 import FilmListView from '../view/film-list-view';
@@ -38,6 +39,7 @@ export default class FilmsPresenter {
     const filmDetailsView = new FilmDetailsView(film);
 
     const renderDetails = () => {
+      render(filmDetailsView, document.body);
       document.body.appendChild(filmDetailsView.getElement());
 
       const commentsContainer = filmDetailsView.element.querySelector('.film-details__comments-list');
@@ -48,21 +50,24 @@ export default class FilmsPresenter {
       }
     };
 
-    const closePopup = (evt) => {
+    const onCloseClick = (evt) => {
       evt.preventDefault();
-      document.body.classList.remove('hide-overflow');
-      filmDetailsView.element.querySelector('.film-details__close-btn').removeEventListener('click', closePopup);
-      document.body.removeChild(filmDetailsView.getElement());
+      closePopup();
     };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        document.body.classList.remove('hide-overflow');
-        document.removeEventListener('keydown', onEscKeyDown);
-        document.body.removeChild(filmDetailsView.getElement());
+        closePopup();
       }
     };
+
+    function closePopup () {
+      document.body.classList.remove('hide-overflow');
+      filmDetailsView.element.querySelector('.film-details__close-btn').removeEventListener('click', onCloseClick);
+      remove(filmDetailsView);
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
 
     const openPopup = (evt) => {
       evt.preventDefault();
@@ -70,7 +75,7 @@ export default class FilmsPresenter {
       renderDetails();
 
       document.addEventListener('keydown', onEscKeyDown);
-      filmDetailsView.element.querySelector('.film-details__close-btn').addEventListener('click', closePopup);
+      filmDetailsView.element.querySelector('.film-details__close-btn').addEventListener('click', onCloseClick);
     };
 
     render(filmView, this.#filmListContainer.getElement());
