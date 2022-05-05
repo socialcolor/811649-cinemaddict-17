@@ -1,5 +1,5 @@
 import {render} from '../render';
-import remove from '../remove';
+import {remove} from '../remove';
 import FilterView from '../view/filter-view';
 import FilmSectionView from '../view/film-section-view';
 import FilmListView from '../view/film-list-view';
