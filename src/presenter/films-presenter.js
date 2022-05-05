@@ -104,6 +104,9 @@ export default class FilmsPresenter {
     render(new FilterView(), this.#mainSection);
     render(this.#filmSection, this.#mainSection);
     render(this.#filmList, this.#filmSection.getElement());
+    if(!this.#films.length) {
+      return render(new FilmListEmptyView('There are no movies in our database'), this.#filmList.getElement());
+    }
     render(new FilmListTitleView(), this.#filmList.getElement());
     render(this.#filmListContainer, this.#filmList.getElement());
     render(new FilmMostView('Top rated'), this.#filmSection.getElement());
