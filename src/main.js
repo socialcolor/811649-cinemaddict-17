@@ -1,4 +1,4 @@
-import {render} from './render';
+import {render} from './framework/render';
 import FilmsPresenter from './presenter/films-presenter';
 import RateView from './view/rate-view';
 import FilmModel from './model/film-model';

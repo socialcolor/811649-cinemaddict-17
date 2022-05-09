@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import {formatDate, formatTime} from '../utils';
 
 const createFilmDetailsTmplate = (film) => {
@@ -119,24 +119,15 @@ const createFilmDetailsTmplate = (film) => {
   </section>`;
 };
 
-export default class FilmDetailsView {
+export default class FilmDetailsView extends AbstractView {
+  #film = null;
+
   constructor (film) {
-    this.film = film;
+    super();
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmDetailsTmplate(this.film);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createFilmDetailsTmplate(this.#film);
   }
 }

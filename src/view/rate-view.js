@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 
 const createRateTemplate = () => (
   `<section class="header__profile profile">
@@ -7,20 +7,8 @@ const createRateTemplate = () => (
   </section>`
 );
 
-export default class RateView {
-  getTemplate() {
+export default class RateView extends AbstractView {
+  get template() {
     return createRateTemplate();
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }
