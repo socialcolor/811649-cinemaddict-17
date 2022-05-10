@@ -12,5 +12,4 @@ const comments = generateComments();
 const filmsModel = new FilmModel(films, comments);
 const filmPresenter = new FilmsPresenter(mainContainer, filmsModel);
 render(new RateView(), header);
-
 filmPresenter.init();

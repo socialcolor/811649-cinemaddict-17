@@ -1,5 +1,5 @@
-import {render} from '../framework/render';
-import {remove} from '../remove';
+import {render, remove} from '../framework/render';
+// import {remove} from '../remove';
 import FilterView from '../view/filter-view';
 import FilmSectionView from '../view/film-section-view';
 import FilmListView from '../view/film-list-view';
@@ -38,8 +38,7 @@ export default class FilmsPresenter {
 
   };
 
-  #handleShowMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #onShowMoreButtonClick = () => {
     this.#films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => this.#renderFilm(film));
@@ -67,8 +66,7 @@ export default class FilmsPresenter {
       }
     };
 
-    const onCloseClick = (evt) => {
-      evt.preventDefault();
+    const onCloseClick = () => {
       closePopup();
     };
 
@@ -86,18 +84,16 @@ export default class FilmsPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     }
 
-    const openPopup = (evt) => {
-      evt.preventDefault();
+    const openPopup = () => {
       document.body.classList.add('hide-overflow');
       renderDetails();
 
       document.addEventListener('keydown', onEscKeyDown);
-      filmDetailsView.element.querySelector('.film-details__close-btn').addEventListener('click', onCloseClick);
+      filmDetailsView.seCloseButtonHandler(onCloseClick);
     };
 
     render(filmView, this.#filmListContainer.element);
-
-    filmView.element.querySelector('.film-card__link').addEventListener('click', openPopup);
+    filmView.setFilmLinkHandler(openPopup);
   };
 
   #renderFilmsBoard = () => {
@@ -116,13 +112,10 @@ export default class FilmsPresenter {
 
       if(this.#films.length > FILM_COUNT_PER_STEP) {
         render(this.#showMoreButton, this.#filmList.element);
-
-        this.#showMoreButton.element.addEventListener('click', this.#handleShowMoreButtonClick);
+        this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
       }
     } else {
       render(new FilmListEmptyView('There are no movies in our database'), this.#filmList.element);
     }
   };
-
-
 }

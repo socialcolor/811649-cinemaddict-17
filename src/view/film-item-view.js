@@ -40,4 +40,14 @@ export default class FilmItemView extends AbstractView {
   get template() {
     return createFilmItemTemplate(this.#film);
   }
+
+  setFilmLinkHandler(callback) {
+    this._callback.onFilmLinkClick = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#onFilmLinkClick);
+  }
+
+  #onFilmLinkClick = (evt) => {
+    evt.preventDefault();
+    this._callback.onFilmLinkClick();
+  };
 }
