@@ -1,5 +1,5 @@
-import {render} from '../render';
-import {remove} from '../remove';
+import {render, remove} from '../framework/render';
+// import {remove} from '../remove';
 import FilterView from '../view/filter-view';
 import FilmSectionView from '../view/film-section-view';
 import FilmListView from '../view/film-list-view';
@@ -38,8 +38,7 @@ export default class FilmsPresenter {
 
   };
 
-  #handleShowMoreButtonClick = (evt) => {
-    evt.preventDefault();
+  #onShowMoreButtonClick = () => {
     this.#films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => this.#renderFilm(film));
@@ -67,8 +66,7 @@ export default class FilmsPresenter {
       }
     };
 
-    const onCloseClick = (evt) => {
-      evt.preventDefault();
+    const onCloseClick = () => {
       closePopup();
     };
 
@@ -86,43 +84,38 @@ export default class FilmsPresenter {
       document.removeEventListener('keydown', onEscKeyDown);
     }
 
-    const openPopup = (evt) => {
-      evt.preventDefault();
+    const openPopup = () => {
       document.body.classList.add('hide-overflow');
       renderDetails();
 
       document.addEventListener('keydown', onEscKeyDown);
-      filmDetailsView.element.querySelector('.film-details__close-btn').addEventListener('click', onCloseClick);
+      filmDetailsView.seCloseButtonHandler(onCloseClick);
     };
 
-    render(filmView, this.#filmListContainer.getElement());
-
-    filmView.element.querySelector('.film-card__link').addEventListener('click', openPopup);
+    render(filmView, this.#filmListContainer.element);
+    filmView.setFilmLinkHandler(openPopup);
   };
 
   #renderFilmsBoard = () => {
     render(new FilterView(), this.#mainSection);
     render(this.#filmSection, this.#mainSection);
-    render(this.#filmList, this.#filmSection.getElement());
+    render(this.#filmList, this.#filmSection.element);
     if(this.#films.length > 0) {
-      render(new FilmListTitleView(), this.#filmList.getElement());
-      render(this.#filmListContainer, this.#filmList.getElement());
-      render(new FilmMostView('Top rated'), this.#filmSection.getElement());
-      render(new FilmMostView('Most commented'), this.#filmSection.getElement());
+      render(new FilmListTitleView(), this.#filmList.element);
+      render(this.#filmListContainer, this.#filmList.element);
+      render(new FilmMostView('Top rated'), this.#filmSection.element);
+      render(new FilmMostView('Most commented'), this.#filmSection.element);
 
       for (let i = 0; i < Math.min(this.#films.length, FILM_COUNT_PER_STEP); i++) {
         this.#renderFilm(this.#films[i]);
       }
 
       if(this.#films.length > FILM_COUNT_PER_STEP) {
-        render(this.#showMoreButton, this.#filmList.getElement());
-
-        this.#showMoreButton.element.addEventListener('click', this.#handleShowMoreButtonClick);
+        render(this.#showMoreButton, this.#filmList.element);
+        this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
       }
     } else {
-      render(new FilmListEmptyView('There are no movies in our database'), this.#filmList.getElement());
+      render(new FilmListEmptyView('There are no movies in our database'), this.#filmList.element);
     }
   };
-
-
 }

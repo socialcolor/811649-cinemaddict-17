@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import {formatDate} from '../utils';
 
 const createCommentsTmplate = (comments) => {
@@ -20,24 +20,15 @@ const createCommentsTmplate = (comments) => {
   </li>`;
 };
 
-export default class FilmDetailsCommentsView {
+export default class FilmDetailsCommentsView extends AbstractView {
+  #comment = null;
+
   constructor (comment) {
+    super();
     this.comment = comment;
   }
 
-  getTemplate() {
+  get template() {
     return createCommentsTmplate(this.comment);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
   }
 }

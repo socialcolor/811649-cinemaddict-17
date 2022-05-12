@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view';
 import {formatDate, formatTime} from '../utils';
 
 const createFilmItemTemplate = (film) => {
@@ -29,24 +29,25 @@ const createFilmItemTemplate = (film) => {
   </article>`;
 };
 
-export default class FilmItemView {
+export default class FilmItemView extends AbstractView {
+  #film = null;
+
   constructor (film) {
-    this.film = film;
+    super();
+    this.#film = film;
   }
 
-  getTemplate() {
-    return createFilmItemTemplate(this.film);
+  get template() {
+    return createFilmItemTemplate(this.#film);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  setFilmLinkHandler(callback) {
+    this._callback.onFilmLinkClick = callback;
+    this.element.querySelector('.film-card__link').addEventListener('click', this.#onFilmLinkClick);
   }
 
-  removeElement() {
-    this.element = null;
-  }
+  #onFilmLinkClick = (evt) => {
+    evt.preventDefault();
+    this._callback.onFilmLinkClick();
+  };
 }
