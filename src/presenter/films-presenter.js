@@ -35,7 +35,6 @@ export default class FilmsPresenter {
     this.#comments = [...this.#filmModel.comments];
 
     this.#renderFilmsBoard();
-
   };
 
   #onShowMoreButtonClick = () => {
@@ -97,7 +96,9 @@ export default class FilmsPresenter {
   };
 
   #renderFilmsBoard = () => {
-    render(new FilterView(), this.#mainSection);
+    const watchlist = this.#films.filter((film) => film.filmInfo.userDetails.watchlist);
+    const favorite = this.#films.filter((film) => film.filmInfo.userDetails.favorite);
+    render(new FilterView(watchlist, favorite), this.#mainSection);
     render(this.#filmSection, this.#mainSection);
     render(this.#filmList, this.#filmSection.element);
     if(this.#films.length > 0) {
