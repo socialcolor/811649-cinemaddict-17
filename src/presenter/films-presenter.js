@@ -72,11 +72,11 @@ export default class FilmsPresenter {
     render(this.#filmSection, this.#mainSection);
     render(this.#filmList, this.#filmSection.element);
 
-    this.#renderMostFilms();
 
     if(this.#films.length > 0) {
       render(new FilmListTitleView(), this.#filmList.element);
       render(this.#filmListContainer, this.#filmList.element);
+
 
       for (let i = 0; i < Math.min(this.#films.length, FILM_COUNT_PER_STEP); i++) {
         new FilmPresenter(this.#films[i], this.#comments, this.#filmListContainer.element);
@@ -86,6 +86,8 @@ export default class FilmsPresenter {
         render(this.#showMoreButton, this.#filmList.element);
         this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
       }
+
+      this.#renderMostFilms();
     } else {
       render(new FilmListEmptyView('There are no movies in our database'), this.#filmList.element);
     }
