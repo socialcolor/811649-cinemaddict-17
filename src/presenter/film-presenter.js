@@ -62,11 +62,13 @@ export default class FilmPresenter {
   };
 
   #openPopup = () => {
-    document.body.classList.add('hide-overflow');
-    this.#renderDetails();
+    if(!(document.querySelector('.film-details'))) {
+      document.body.classList.add('hide-overflow');
+      this.#renderDetails();
 
-    document.addEventListener('keydown', this.#onEscKeyDown);
-    this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
+      document.addEventListener('keydown', this.#onEscKeyDown);
+      this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
+    }
   };
 
   #onFilmButtonClick = (name) => {
