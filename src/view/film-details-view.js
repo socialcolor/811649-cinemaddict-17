@@ -71,9 +71,9 @@ const createFilmDetailsTmplate = (film) => {
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist}" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched}" id="watched" name="watched">Already watched</button>
-          <button type="button" class="film-details__control-button film-details__control-button--favorite ${favorite}" id="favorite" name="favorite">Add to favorites</button>
+          <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist}" data-name="watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+          <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched}" data-name="alreadyWatched" id="watched" name="watched">Already watched</button>
+          <button type="button" class="film-details__control-button film-details__control-button--favorite ${favorite}" data-name="favorite" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
 
@@ -136,8 +136,21 @@ export default class FilmDetailsView extends AbstractView {
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onCloseButtonClick);
   }
 
+  setDetailsControlsHandler (callback) {
+    this._callback.onDetailsButtonClick = callback;
+    this.element.querySelector('.film-details__controls').addEventListener('click', this.#onDetailsControlsClick);
+  }
+
   #onCloseButtonClick = (evt) => {
     evt.preventDefault();
     this._callback.onCloseButtonClick();
+  };
+
+  #onDetailsControlsClick = (evt) => {
+    if(evt.target.tagName.toLowerCase() === 'button') {
+      evt.preventDefault();
+      evt.target.classList.toggle('film-details__control-button--active');
+      this._callback.onDetailsButtonClick(evt.target.dataset.name);
+    }
   };
 }

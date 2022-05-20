@@ -23,9 +23,18 @@ export default class FilmPresenter {
     this.#rednerFilm();
   };
 
+  #onDetailsButtonClick = (name) => {
+    if (this.#film.filmInfo.userDetails[name]) {
+      this.#film.filmInfo.userDetails[name] = false;
+    } else {
+      this.#film.filmInfo.userDetails[name] = true;
+    }
+    this.#filmView.changheStateFilm(name);
+  };
+
   #renderDetails = () => {
     render(this.#filmDetailsView, document.body);
-
+    this.#filmDetailsView.setDetailsControlsHandler(this.#onDetailsButtonClick);
     const commentsContainer = this.#filmDetailsView.element.querySelector('.film-details__comments-list');
 
     for(let i = 0; i < this.#film.comments.length; i++) {
@@ -60,8 +69,19 @@ export default class FilmPresenter {
     this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
   };
 
+  #onFilmButtonClick = (name) => {
+    if (this.#film.filmInfo.userDetails[name]) {
+      this.#film.filmInfo.userDetails[name] = false;
+    } else {
+      this.#film.filmInfo.userDetails[name] = true;
+    }
+    remove(this.#filmDetailsView);
+    this.#filmDetailsView = new FilmDetailsView(this.#film);
+  };
+
   #rednerFilm = () => {
     render(this.#filmView, this.#container);
     this.#filmView.setFilmLinkHandler(this.#openPopup);
+    this.#filmView.setFilmButtonClick(this.#onFilmButtonClick);
   };
 }
