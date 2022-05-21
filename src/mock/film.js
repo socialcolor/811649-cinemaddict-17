@@ -68,12 +68,12 @@ const generateFilms = () => {
           runtime: getRandomInteger(70, 150),
           genre: GENRES[getRandomInteger(1, 3)],
           description: generateDescription(),
-          userDetails: {
-            watchlist: Boolean(getRandomInteger(0, 1)),
-            alreadyWatched: Boolean(getRandomInteger(0, 1)),
-            watchingDate: dayjs().subtract(getRandomInteger(1, 11000), 'day').toISOString(),
-            favorite: Boolean(getRandomInteger(0, 1)),
-          }
+        },
+        userDetails: {
+          watchlist: Boolean(getRandomInteger(0, 1)),
+          alreadyWatched: Boolean(getRandomInteger(0, 1)),
+          watchingDate: dayjs().subtract(getRandomInteger(1, 11000), 'day').toISOString(),
+          favorite: Boolean(getRandomInteger(0, 1)),
         }
       }
     );
