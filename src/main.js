@@ -1,5 +1,5 @@
 import {render} from './framework/render';
-import FilmsPresenter from './presenter/films-presenter';
+import FilmsListPresenter from './presenter/films-list-presenter';
 import RateView from './view/rate-view';
 import FilmModel from './model/film-model';
 import {generateFilms, generateComments} from './mock/film';
@@ -10,6 +10,6 @@ const films = generateFilms();
 const comments = generateComments();
 
 const filmsModel = new FilmModel(films, comments);
-const filmPresenter = new FilmsPresenter(mainContainer, filmsModel);
+const filmListPresenter = new FilmsListPresenter(mainContainer, filmsModel);
 render(new RateView(), header);
-filmPresenter.init();
+filmListPresenter.init();
