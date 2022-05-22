@@ -38,20 +38,20 @@ export default class FilmsListPresenter {
 
   changeData = (data) => {
     this.#films = updateItem(this.#films, data);
-    this.#filmPresenter.get(data.id).init(data);//Пока у меня в массиве по одному презентеру, как потом узнать какой именно элемент массива мне нужен?
+    this.#filmPresenter.get(data.id).forEach((presenter) => presenter.init(data));
   };
 
   closePopup = () => {
-    this.#filmPresenter.forEach((presenter) => presenter.closePopup());
+    this.#filmPresenter.forEach((presenters) => presenters.forEach((presenter) => presenter.closePopup()));
   };
 
   #onShowMoreButtonClick = () => {
     this.#films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => {
-        const movie = new FilmPresenter(this.#comments, this.#filmListContainer.element, this.changeData);
-        this.#filmPresenter.set(film.id, movie);
-        movie.init(film);
+        const filmPresenter = new FilmPresenter(this.#comments, this.#filmListContainer.element, this.changeData, this.closePopup);
+        this.#setFilmPresenter(film.id, filmPresenter);
+        filmPresenter.init(film);
       });
 
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
@@ -71,12 +71,16 @@ export default class FilmsListPresenter {
     render(mostComment, this.#filmSection.element);
 
     for(let i = 0; i < TOP_RATED_FILMS; i++) {
-      const filmTopRatePresenter = new FilmPresenter(this.#comments, topRated.element.querySelector('.films-list__container'));
-      filmTopRatePresenter.init(topRateFimls[i]);
+      const filmTopRatePresenter = new FilmPresenter(this.#comments, topRated.element.querySelector('.films-list__container'), this.changeData, this.closePopup);
+      const topRatedFilm = topRateFimls[i];
+      this.#setFilmPresenter(topRatedFilm.id, filmTopRatePresenter);
+      filmTopRatePresenter.init(topRatedFilm);
     }
     for(let i = 0; i < MOST_COMMENTS_FILMS; i++) {
-      const filmMostCommentedPrestner = new FilmPresenter(this.#comments, mostComment.element.querySelector('.films-list__container'));
-      filmMostCommentedPrestner.init(mostCommentsFilms[i]);
+      const filmMostCommentedPrestner = new FilmPresenter(this.#comments, mostComment.element.querySelector('.films-list__container'), this.changeData, this.closePopup);
+      const mostCommentedFilm = mostCommentsFilms[i];
+      this.#setFilmPresenter(mostCommentedFilm.id, filmMostCommentedPrestner);
+      filmMostCommentedPrestner.init(mostCommentedFilm);
     }
   };
 
@@ -86,9 +90,10 @@ export default class FilmsListPresenter {
       render(this.#filmListContainer, this.#filmList.element);
 
       for (let i = 0; i < Math.min(this.#films.length, FILM_COUNT_PER_STEP); i++) {
-        const movie = new FilmPresenter(this.#comments, this.#filmListContainer.element, this.changeData, this.closePopup);
-        this.#filmPresenter.set(this.#films[i].id, movie);
-        movie.init(this.#films[i]);
+        const film = this.#films[i];
+        const filmPresenter = new FilmPresenter(this.#comments, this.#filmListContainer.element, this.changeData, this.closePopup);
+        this.#setFilmPresenter(film.id, filmPresenter);
+        filmPresenter.init(film);
       }
 
       if(this.#films.length > FILM_COUNT_PER_STEP) {
@@ -109,5 +114,14 @@ export default class FilmsListPresenter {
     render(this.#filmSection, this.#mainSection);
     render(this.#filmList, this.#filmSection.element);
     this.#renderFilm();
+  };
+
+  #setFilmPresenter = (filmId, filmPresenter) => {
+    const existingPresenters = this.#filmPresenter.get(filmId);
+    if(existingPresenters) {
+      existingPresenters.push(filmPresenter);
+    } else {
+      this.#filmPresenter.set(filmId, [filmPresenter]);
+    }
   };
 }

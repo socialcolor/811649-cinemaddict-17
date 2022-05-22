@@ -27,7 +27,6 @@ export default class FilmPresenter {
     const prevFilmView = this.#filmView;
 
     this.#filmView = new FilmItemView(film);
-    this.#filmDetailsView = new FilmDetailsView(film);
 
     this.#filmView.setFilmLinkHandler(this.#openPopup);
     this.#filmView.setWatchlistHandler(this.#onWatchListClick);
@@ -39,19 +38,32 @@ export default class FilmPresenter {
     } else {
       replace(this.#filmView, prevFilmView);
     }
+
+    if(this.#filmDetailsView) {
+      this.#renderDetails();
+    }
   };
 
 
   #renderDetails = () => {
-    render(this.#filmDetailsView, document.body);
-    this.#filmDetailsView.setWatchlistHandler(this.#onWatchListDetailsClick);
-    this.#filmDetailsView.setWatchedHandler(this.#onWatchedDetailsClick);
-    this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteDetailsClick);
+    const prevFilmDetailsView = this.#filmDetailsView;
+    this.#filmDetailsView = new FilmDetailsView(this.#film);
+
+    this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
+    this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
+    this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
+    this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);
     const commentsContainer = this.#filmDetailsView.element.querySelector('.film-details__comments-list');
 
     for(let i = 0; i < this.#film.comments.length; i++) {
       const commentsId = this.#comments[i];
       render(new FilmDetailsCommentView(commentsId), commentsContainer);
+    }
+
+    if(prevFilmDetailsView === null) {
+      render(this.#filmDetailsView, document.body);
+    } else {
+      replace(this.#filmDetailsView, prevFilmDetailsView);
     }
   };
 
@@ -67,40 +79,20 @@ export default class FilmPresenter {
   };
 
   closePopup = function closePopup () {
-    document.body.classList.remove('hide-overflow');
-    this.#filmDetailsView.element.querySelector('.film-details__close-btn').removeEventListener('click', this.#onCloseClick);
-    remove(this.#filmDetailsView);
-    document.removeEventListener('keydown', this.#onEscKeyDown);
+    if(this.#filmDetailsView) {
+      document.body.classList.remove('hide-overflow');
+      this.#filmDetailsView.element.querySelector('.film-details__close-btn').removeEventListener('click', this.#onCloseClick);
+      remove(this.#filmDetailsView);
+      document.removeEventListener('keydown', this.#onEscKeyDown);
+      this.#filmDetailsView = null;
+    }
   };
 
   #openPopup = () => {
     this.#closePopup();
     this.#renderDetails();
     document.body.classList.add('hide-overflow');
-
     document.addEventListener('keydown', this.#onEscKeyDown);
-    this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
-  };
-
-  #onWatchListDetailsClick = () => {
-    const userDetails = this.#film.userDetails;
-    const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    this.#changeData(change);
-    this.#renderDetails();
-  };
-
-  #onWatchedDetailsClick = () => {
-    const userDetails = this.#film.userDetails;
-    const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    this.#changeData(change);
-    this.#renderDetails();
-  };
-
-  #onFavoriteDetailsClick = () => {
-    const userDetails = this.#film.userDetails;
-    const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    this.#changeData(change);
-    this.#renderDetails();
   };
 
   #onWatchListClick = () => {
