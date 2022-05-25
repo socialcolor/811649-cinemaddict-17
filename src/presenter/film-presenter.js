@@ -32,7 +32,6 @@ export default class FilmPresenter {
     this.#filmView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmView.setWatchedHandler(this.#onWatchedClick);
     this.#filmView.setFavoriteHandler(this.#onFavoriteClick);
-
     if(prevFilmView === null) {
       render(this.#filmView, this.#container);
     } else {
@@ -40,10 +39,15 @@ export default class FilmPresenter {
     }
 
     if(this.#filmDetailsView) {
-      this.#renderDetails();
+      remove(this.#renderDetails());
+      remove(this.#filmDetailsView());
     }
   };
 
+  destroy = () => {
+    remove(this.#filmView);
+    remove(this.#filmDetailsView);
+  };
 
   #renderDetails = () => {
     const prevFilmDetailsView = this.#filmDetailsView;
