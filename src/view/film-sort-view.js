@@ -32,7 +32,7 @@ export default class FilmSortView extends AbstractView {
 
     evt.preventDefault();
     this._callback.onSortClick(evt.target.dataset.sort);
-  }
+  };
 
   setSortClickHandler(callback) {
     this._callback.onSortClick = callback;
