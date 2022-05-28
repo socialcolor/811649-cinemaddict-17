@@ -1,11 +1,11 @@
 import {render, remove, replace} from '../framework/render';
 import FilterView from '../view/film-filter-view';
-import {FILTERS_TYPE} from '../const';
 
 export default class FilterPresenter {
   #container = null;
   filterChanged = null;
 
+  #filters = null;
   #activeFilter = null;
 
   #filterView = null;
@@ -15,15 +15,13 @@ export default class FilterPresenter {
     this.filterChanged = filterChanged;
   }
 
-  init = (films, activeFilter = FILTERS_TYPE.ALL) => {
-    const watchlist = films.filter((film) => film.userDetails.watchlist);
-    const history = films.filter((film) => film.userDetails.alreadyWatched);
-    const favorites = films.filter((film) => film.userDetails.favorite);
+  init = (filters, activeFilter) => {
+    this.#filters = filters;
     this.#activeFilter = activeFilter;
 
     const prevFilterView = this.#filterView;
 
-    this.#filterView = new FilterView(watchlist, history, favorites, this.#activeFilter);
+    this.#filterView = new FilterView(this.#filters.watchlist, this.#filters.alreadyWatched, this.#filters.favorite, this.#activeFilter);
 
     if(prevFilterView === null) {
       render(this.#filterView, this.#container);

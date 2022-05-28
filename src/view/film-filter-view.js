@@ -2,10 +2,6 @@ import AbstractView from '../framework/view/abstract-view';
 import {FILTERS_TYPE} from '../const';
 
 const createFilterTemplate = (watchlist, history, favorite, activeFilter) => {
-  const watchlistCount = watchlist.length;
-  const historyCount = history.length;
-  const favoriteCount = favorite.length;
-
   const activeAll = activeFilter === FILTERS_TYPE.ALL ? 'main-navigation__item--active' : '';
   const activeWatchlist = activeFilter === FILTERS_TYPE.WATCHLIST ? 'main-navigation__item--active' : '';
   const activeHistory = activeFilter === FILTERS_TYPE.HISTORY ? 'main-navigation__item--active' : '';
@@ -13,9 +9,9 @@ const createFilterTemplate = (watchlist, history, favorite, activeFilter) => {
 
   return `<nav class="main-navigation">
       <a href="#all" class="main-navigation__item ${activeAll}" data-filter="${FILTERS_TYPE.ALL}">All movies</a>
-      <a href="#watchlist" class="main-navigation__item ${activeWatchlist}" data-filter="${FILTERS_TYPE.WATCHLIST}">Watchlist <span class="main-navigation__item-count">${watchlistCount}</span></a>
-      <a href="#history" class="main-navigation__item ${activeHistory}" data-filter="${FILTERS_TYPE.HISTORY}">History <span class="main-navigation__item-count">${historyCount}</span></a>
-      <a href="#favorites" class="main-navigation__item ${activeFavorites}" data-filter="${FILTERS_TYPE.FAVORITES}">Favorites <span class="main-navigation__item-count">${favoriteCount}</span></a>
+      <a href="#watchlist" class="main-navigation__item ${activeWatchlist}" data-filter="${FILTERS_TYPE.WATCHLIST}">Watchlist <span class="main-navigation__item-count" data-filter="${FILTERS_TYPE.WATCHLIST}">${watchlist}</span></a>
+      <a href="#history" class="main-navigation__item ${activeHistory}" data-filter="${FILTERS_TYPE.HISTORY}">History <span class="main-navigation__item-count" data-filter="${FILTERS_TYPE.HISTORY}">${history}</span></a>
+      <a href="#favorites" class="main-navigation__item ${activeFavorites}" data-filter="${FILTERS_TYPE.FAVORITES}">Favorites <span class="main-navigation__item-count" data-filter="${FILTERS_TYPE.FAVORITES}">${favorite}</span></a>
   </nav>`;
 };
 
@@ -38,7 +34,7 @@ export default class FilterView extends AbstractView {
   }
 
   #onFilterClick = (evt) => {
-    if(evt.target.tagName !== 'A') {
+    if(evt.target.tagName !== 'SPAN' && evt.target.tagName !== 'A') {
       return;
     }
     evt.preventDefault();

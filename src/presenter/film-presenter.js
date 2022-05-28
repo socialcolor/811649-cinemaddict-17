@@ -3,7 +3,6 @@ import FilmItemView from '../view/film-item-view';
 import FilmDetailsView from '../view/film-details-view';
 import FilmDetailsCommentView from '../view/film-details-comments.view';
 
-
 export default class FilmPresenter {
   #comments = null;
   #container = null;
@@ -39,14 +38,12 @@ export default class FilmPresenter {
     }
 
     if(this.#filmDetailsView) {
-      remove(this.#renderDetails());
-      remove(this.#filmDetailsView());
+      this.#renderDetails();
     }
   };
 
   destroy = () => {
     remove(this.#filmView);
-    remove(this.#filmDetailsView);
   };
 
   #renderDetails = () => {
