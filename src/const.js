@@ -1,8 +1,34 @@
 const FILM_COUNT_PER_STEP = 5;
-const FILM_LENGTH = 11;
-const COMMENTS_LENGTH = 30;
+const FILM_LENGTH = 15;
+const COMMENTS_LENGTH = 10;
 const TOP_RATED_FILMS = 2;
 const MOST_COMMENTS_FILMS = 2;
+
+const RATES = {
+  NOVICE: 'Novice',
+  FAN: 'Fan',
+  MOVIE_BUFF: 'Movie Buff'
+};
+
+const FILTERS_TYPE = {
+  ALL: 'all',
+  WATCHLIST: 'watchlist',
+  HISTORY: 'history',
+  FAVORITES: 'favorites'
+};
+
+const EMPTY_TEXT = {
+  ALL: 'There are no movies in our database',
+  WATCHLIST: 'There are no watchlist movies now',
+  HISTORY: 'There are no history movies now',
+  FAVORITES: 'There are no favorite movies now'
+};
+
+const SORT_TYPE = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating'
+};
 
 const DIRTCTORS = [
   'Guillermo del Toro',
@@ -59,4 +85,21 @@ const EMOTIONS = [
   'puke',
   'angry'
 ];
-export {FILM_LENGTH, COMMENTS_LENGTH, TOP_RATED_FILMS, MOST_COMMENTS_FILMS, DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS, FILM_COUNT_PER_STEP};
+export {
+  FILM_LENGTH,
+  COMMENTS_LENGTH,
+  TOP_RATED_FILMS,
+  MOST_COMMENTS_FILMS,
+  DIRTCTORS,
+  GENRES,
+  COUNTRIES,
+  POSTERS,
+  AUTHORS_COMMENT,
+  COMMENTS,
+  EMOTIONS,
+  FILM_COUNT_PER_STEP,
+  FILTERS_TYPE,
+  RATES,
+  SORT_TYPE,
+  EMPTY_TEXT
+};

@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
-import {formatDate} from '../utils';
+import {formatDate} from '../utils/utils';
 
 const createCommentsTmplate = (comments) => {
   const {author, comment, date, emotion} = comments;

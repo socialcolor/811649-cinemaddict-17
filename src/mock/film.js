@@ -1,4 +1,4 @@
-import {getRandomInteger} from '../utils';
+import {getRandomInteger} from '../utils/utils.js';
 import dayjs from 'dayjs';
 import {DIRTCTORS, GENRES, COUNTRIES, POSTERS, AUTHORS_COMMENT, COMMENTS, EMOTIONS, FILM_LENGTH, COMMENTS_LENGTH} from '../const';
 

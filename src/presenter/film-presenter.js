@@ -3,7 +3,6 @@ import FilmItemView from '../view/film-item-view';
 import FilmDetailsView from '../view/film-details-view';
 import FilmDetailsCommentView from '../view/film-details-comments.view';
 
-
 export default class FilmPresenter {
   #comments = null;
   #container = null;
@@ -32,7 +31,6 @@ export default class FilmPresenter {
     this.#filmView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmView.setWatchedHandler(this.#onWatchedClick);
     this.#filmView.setFavoriteHandler(this.#onFavoriteClick);
-
     if(prevFilmView === null) {
       render(this.#filmView, this.#container);
     } else {
@@ -44,6 +42,9 @@ export default class FilmPresenter {
     }
   };
 
+  destroy = () => {
+    remove(this.#filmView);
+  };
 
   #renderDetails = () => {
     const prevFilmDetailsView = this.#filmDetailsView;
