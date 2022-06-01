@@ -40,7 +40,7 @@ export default class FilmsListPresenter {
   #alreadyWatchedFilms = [];
   #favoriteFilms = [];
   #filtresSortByDefault = [];
-  #renderedFilmCount = 0;
+  #renderedFilmCount = FILM_COUNT_PER_STEP;
 
   constructor (container, header, filmsModel) {
     this.#mainSection = container;
@@ -76,6 +76,7 @@ export default class FilmsListPresenter {
   };
 
   changeFilter = (activeFilter) => {
+    this.#renderedFilmCount = FILM_COUNT_PER_STEP;
     if(this.#currentFilter === activeFilter) {
       return;
     }
@@ -119,7 +120,6 @@ export default class FilmsListPresenter {
       });
 
     this.#renderedFilmCount += FILM_COUNT_PER_STEP;
-
     if (this.#renderedFilmCount >= this.#films.length) {
       this.#removeShowMoreButton();
     }
@@ -249,8 +249,7 @@ export default class FilmsListPresenter {
     if(this.#films.length > 0) {
       render(new FilmListTitleView(), this.#filmList.element);
       render(this.#filmListContainer, this.#filmList.element);
-
-      const renderLength = Math.min(this.#films.length, FILM_COUNT_PER_STEP);
+      const renderLength = Math.min(this.#films.length, this.#renderedFilmCount);
 
       for (let i = 0; i < renderLength; i++) {
         this.#renderFilm(this.#films[i]);
