@@ -1,5 +1,5 @@
 const FILM_COUNT_PER_STEP = 5;
-const FILM_LENGTH = 5;
+const FILM_LENGTH = 15;
 const COMMENTS_LENGTH = 10;
 const TOP_RATED_FILMS = 2;
 const MOST_COMMENTS_FILMS = 2;
@@ -15,6 +15,13 @@ const FILTERS_TYPE = {
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites'
+};
+
+const EMPTY_TEXT = {
+  ALL: 'There are no movies in our database',
+  WATCHLIST: 'There are no watchlist movies now',
+  HISTORY: 'There are no history movies now',
+  FAVORITES: 'There are no favorite movies now'
 };
 
 const SORT_TYPE = {
@@ -93,5 +100,6 @@ export {
   FILM_COUNT_PER_STEP,
   FILTERS_TYPE,
   RATES,
-  SORT_TYPE
+  SORT_TYPE,
+  EMPTY_TEXT
 };
