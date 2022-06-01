@@ -141,20 +141,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  #setSortedFilms = () => {
-    switch (this.#currentSort) {
-      case SORT_TYPE.RATING:
-        this.#films.sort((a, b) => b.filmInfo.rate - a.filmInfo.rate);
-        break;
-      case SORT_TYPE.DATE:
-        this.#films.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
-        break;
-      case SORT_TYPE.DEFAULT:
-        this.#films = this.#currentFilter !== FILTERS_TYPE.ALL ?  this.#films = [...this.#filtresSortByDefault] :  this.#films = [...this.#sourceFilms];
-        break;
-    }
-  };
-
   #setFilteredFilms = () => {
     switch (this.#currentFilter) {
       case FILTERS_TYPE.WATCHLIST:
@@ -168,6 +154,20 @@ export default class FilmsListPresenter {
         break;
       default:
         this.#films = [...this.#sourceFilms];
+        break;
+    }
+  };
+
+  #setSortedFilms = () => {
+    switch (this.#currentSort) {
+      case SORT_TYPE.RATING:
+        this.#films.sort((a, b) => b.filmInfo.rate - a.filmInfo.rate);
+        break;
+      case SORT_TYPE.DATE:
+        this.#films.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
+        break;
+      case SORT_TYPE.DEFAULT:
+        this.#films = this.#currentFilter !== FILTERS_TYPE.ALL ?  this.#films = [...this.#filtresSortByDefault] :  this.#films = [...this.#sourceFilms];
         break;
     }
   };
@@ -188,6 +188,7 @@ export default class FilmsListPresenter {
 
   #clearFilmsBoard = () => {
     this.#destroyFilmsPresenters();
+    this.#removeSort();
     this.#removeShowMoreButton();
     this.#removeExtraBlocks();
 
@@ -296,6 +297,7 @@ export default class FilmsListPresenter {
   #renderFilmsBoard = () => {
     this.#renderUserRate();
     this.#renderFilter();
+    this.#renderSort();
     render(this.#filmSection, this.#mainSection);
     render(this.#filmList, this.#filmSection.element);
 
@@ -303,7 +305,6 @@ export default class FilmsListPresenter {
       this.#removeSort();
       this.#rednerFilmListEmpty();
     } else {
-      this.#renderSort();
       this.#renderFilms(this.#films);
       this.#renderShowMoreButton(this.#films);
       this.#renderExtraBlock();
