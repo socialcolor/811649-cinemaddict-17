@@ -75,15 +75,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  #changeSort = (sort) => {
-    this.#currentSort = sort;
-
-    this.#setSortedFilms();
-
-    this.#clearFilmsBoard();
-    this.#renderFilmsBoard();
-  };
-
   changeFilter = (activeFilter) => {
     if(this.#currentFilter === activeFilter) {
       return;
@@ -102,19 +93,21 @@ export default class FilmsListPresenter {
     this.#renderFilmsBoard();
   };
 
+  #changeSort = (sort) => {
+    this.#currentSort = sort;
+
+    this.#setSortedFilms();
+
+    this.#clearFilmsBoard();
+    this.#renderFilmsBoard();
+  };
+
+  //Если эту функцию выносить в отдельный файл filter.js, мне придется 4 параметра создавать, мне кажется лучше ее оставить здесь
   #filterFilms = () => {
     this.#watchlistFilms = this.#sourceFilms.filter((film) => film.userDetails.watchlist);
     this.#alreadyWatchedFilms = this.#sourceFilms.filter((film) => film.userDetails.alreadyWatched);
     this.#favoriteFilms = this.#sourceFilms.filter((film) => film.userDetails.favorite);
   };
-
-  #getCountFilmsInFilters = () => ({
-    watchlist: this.#watchlistFilms.length,
-    alreadyWatched: this.#alreadyWatchedFilms.length,
-    favorite: this.#favoriteFilms.length
-  });
-
-  #closePopup = () => this.#filmPresenters.forEach((presenters) => presenters.forEach((presenter) => presenter.closePopup()));
 
   #onShowMoreButtonClick = () => {
     this.#films
@@ -132,6 +125,13 @@ export default class FilmsListPresenter {
     }
   };
 
+  //Тут такая же история, но уже 3 параметра
+  #getCountFilmsInFilters = () => ({
+    watchlist: this.#watchlistFilms.length,
+    alreadyWatched: this.#alreadyWatchedFilms.length,
+    favorite: this.#favoriteFilms.length
+  });
+
   #setFilmPresenter = (filmId, filmPresenter) => {
     const existingPresenters = this.#filmPresenters.get(filmId);
     if(existingPresenters) {
@@ -141,6 +141,7 @@ export default class FilmsListPresenter {
     }
   };
 
+  //А тут целых 6 параметров, 1. this.#currentFilter, 2. this.#films, 3. this.#watchlistFilms, 4. this.#alreadyWatchedFilms, 5. this.#favoriteFilms, 6. this.#sourceFilms
   #setFilteredFilms = () => {
     switch (this.#currentFilter) {
       case FILTERS_TYPE.WATCHLIST:
@@ -158,6 +159,7 @@ export default class FilmsListPresenter {
     }
   };
 
+  //Такая же история
   #setSortedFilms = () => {
     switch (this.#currentSort) {
       case SORT_TYPE.RATING:
@@ -167,10 +169,14 @@ export default class FilmsListPresenter {
         this.#films.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
         break;
       case SORT_TYPE.DEFAULT:
-        this.#films = this.#currentFilter !== FILTERS_TYPE.ALL ?  this.#films = [...this.#filtresSortByDefault] :  this.#films = [...this.#sourceFilms];
+        if(this.#films.length === this.#filtresSortByDefault.length) { //Эта проверка нужна, чтобы если мы убрали из фильтра фильмы, при переключении на sort by default, у нас не возращались все фильмы которые мы удалили из фильтра.
+          this.#films = this.#currentFilter !== FILTERS_TYPE.ALL ?  this.#films = [...this.#filtresSortByDefault] :  this.#films = [...this.#sourceFilms];
+        }
         break;
     }
   };
+
+  #closePopup = () => this.#filmPresenters.forEach((presenters) => presenters.forEach((presenter) => presenter.closePopup()));
 
   #removeFilmsListEmpty = () => remove(this.#filmListEmpty);
 
