@@ -266,7 +266,7 @@ export default class FilmsListPresenter {
   };
 
   #renderShowMoreButton = () => {
-    if(this.#films.length > FILM_COUNT_PER_STEP) {
+    if(this.#films.length > FILM_COUNT_PER_STEP && this.#renderedFilmCount < this.#films.length) {
       this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
       render(this.#showMoreButton, this.#filmList.element);
     }
