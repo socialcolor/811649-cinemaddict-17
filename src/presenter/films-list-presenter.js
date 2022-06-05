@@ -103,7 +103,6 @@ export default class FilmsListPresenter {
     this.#renderFilmsBoard();
   };
 
-  //Если эту функцию выносить в отдельный файл filter.js, мне придется 4 параметра создавать, мне кажется лучше ее оставить здесь
   #filterFilms = () => {
     this.#watchlistFilms = this.#sourceFilms.filter((film) => film.userDetails.watchlist);
     this.#alreadyWatchedFilms = this.#sourceFilms.filter((film) => film.userDetails.alreadyWatched);
@@ -125,7 +124,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  //Тут такая же история, но уже 3 параметра
   #getCountFilmsInFilters = () => ({
     watchlist: this.#watchlistFilms.length,
     alreadyWatched: this.#alreadyWatchedFilms.length,
@@ -141,7 +139,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  //А тут целых 6 параметров, 1. this.#currentFilter, 2. this.#films, 3. this.#watchlistFilms, 4. this.#alreadyWatchedFilms, 5. this.#favoriteFilms, 6. this.#sourceFilms
   #setFilteredFilms = () => {
     switch (this.#currentFilter) {
       case FILTERS_TYPE.WATCHLIST:
@@ -159,7 +156,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  //Такая же история
   #setSortedFilms = () => {
     switch (this.#currentSort) {
       case SORT_TYPE.RATING:
@@ -169,7 +165,7 @@ export default class FilmsListPresenter {
         this.#films.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
         break;
       case SORT_TYPE.DEFAULT:
-        if(this.#films.length === this.#filtresSortByDefault.length) { //Эта проверка нужна, чтобы если мы убрали из фильтра фильмы, при переключении на sort by default, у нас не возращались все фильмы которые мы удалили из фильтра.
+        if(this.#films.length === this.#filtresSortByDefault.length) {
           this.#films = this.#currentFilter !== FILTERS_TYPE.ALL ?  this.#films = [...this.#filtresSortByDefault] :  this.#films = [...this.#sourceFilms];
         }
         break;
@@ -249,7 +245,7 @@ export default class FilmsListPresenter {
     if(this.#films.length > 0) {
       render(new FilmListTitleView(), this.#filmList.element);
       render(this.#filmListContainer, this.#filmList.element);
-      const renderLength = Math.min(this.#films.length, this.#renderedFilmCount);
+      const renderLength = this.#films.length > FILM_COUNT_PER_STEP ? this.#renderedFilmCount : this.#films.length;
 
       for (let i = 0; i < renderLength; i++) {
         this.#renderFilm(this.#films[i]);
