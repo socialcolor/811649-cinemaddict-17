@@ -1,7 +1,6 @@
 import {render, remove, replace} from '../framework/render';
 import FilmItemView from '../view/film-item-view';
 import FilmDetailsView from '../view/film-details-view';
-import FilmDetailsCommentView from '../view/film-details-comments.view';
 
 export default class FilmPresenter {
   #comments = null;
@@ -48,18 +47,12 @@ export default class FilmPresenter {
 
   #renderDetails = () => {
     const prevFilmDetailsView = this.#filmDetailsView;
-    this.#filmDetailsView = new FilmDetailsView(this.#film);
+    this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
 
     this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
     this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
     this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);
-    const commentsContainer = this.#filmDetailsView.element.querySelector('.film-details__comments-list');
-
-    for(let i = 0; i < this.#film.comments.length; i++) {
-      const commentsId = this.#comments[i];
-      render(new FilmDetailsCommentView(commentsId), commentsContainer);
-    }
 
     if(prevFilmDetailsView === null) {
       render(this.#filmDetailsView, document.body);

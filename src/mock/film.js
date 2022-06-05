@@ -39,8 +39,8 @@ const generateDescription = () => {
 const addCommentsInFilm = () => {
   const comments = [];
 
-  for(let i = 0; i < getRandomInteger(0, COMMENTS_LENGTH); i++) {
-    comments.push(getRandomInteger(0, COMMENTS_LENGTH));
+  for(let i = 0; i < getRandomInteger(0, COMMENTS_LENGTH - 1); i++) {
+    comments.push(getRandomInteger(0, COMMENTS_LENGTH -1));
   }
   return comments;
 };
@@ -86,7 +86,7 @@ const generateComments = () => {
   for(let i = 0; i < COMMENTS_LENGTH; i++) {
     comments.push(
       {
-        id: getRandomInteger(0, FILM_LENGTH - 1),
+        id: i,
         author: AUTHORS_COMMENT[getRandomInteger(0, AUTHORS_COMMENT.length - 1)],
         comment:COMMENTS[getRandomInteger(0, COMMENTS.length - 1)],
         date:  dayjs().subtract(getRandomInteger(1, 100, 'day')).toISOString(),
