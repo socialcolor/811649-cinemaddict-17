@@ -44,7 +44,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 
   const createGenresList = filmInfo.genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('');
 
-  const AddEmojiTemplate = emoji ? createAddEmojiTemplate(emoji) : '';
+  const addEmojiTemplate = emoji ? createAddEmojiTemplate(emoji) : '';
 
   const emojiTemplate = createEmojiTemplate(emoji);
 
@@ -129,7 +129,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
           </ul>
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label">${AddEmojiTemplate}</div>
+            <div class="film-details__add-emoji-label">${addEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
