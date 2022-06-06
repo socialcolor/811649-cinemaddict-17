@@ -243,7 +243,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     comment: null,
   });
 
-  static pareStateToFilm = (state) => {
+  static parseStateToFilm = (state) => {
     const localComment = {
       localComment : {
         emoji: state.emoji,

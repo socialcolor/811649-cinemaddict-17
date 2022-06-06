@@ -58,7 +58,6 @@ export default class FilmPresenter {
       render(this.#filmDetailsView, document.body);
     } else {
       replace(this.#filmDetailsView, prevFilmDetailsView);
-      // setScrollPosition(this.#filmDetailsView.element, this.#scrollPosition);
     }
   };
 
@@ -93,25 +92,31 @@ export default class FilmPresenter {
   #onWatchListClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    const scrollPosition = getScrollPosition(this.#filmDetailsView.element);
+    const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
     this.#changeData(change);
-    setScrollPosition(this.#filmDetailsView.element, scrollPosition);
+    if(scrollPosition) {
+      setScrollPosition(this.#filmDetailsView.element, scrollPosition);
+    }
   };
 
   #onWatchedClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    const scrollPosition = getScrollPosition(this.#filmDetailsView.element);
+    const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
     this.#changeData(change);
-    setScrollPosition(this.#filmDetailsView.element, scrollPosition);
+    if(scrollPosition) {
+      setScrollPosition(this.#filmDetailsView.element, scrollPosition);
+    }
   };
 
   #onFavoriteClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    const scrollPosition = getScrollPosition(this.#filmDetailsView.element);
+    const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
     this.#changeData(change);
-    setScrollPosition(this.#filmDetailsView.element, scrollPosition);
+    if(scrollPosition) {
+      setScrollPosition(this.#filmDetailsView.element, scrollPosition);
+    }
   };
 
 }
