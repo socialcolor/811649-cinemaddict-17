@@ -41,7 +41,6 @@ export default class FilmsListPresenter {
   #favoriteFilms = [];
   #filtresSortByDefault = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
-
   constructor (container, header, filmsModel) {
     this.#mainSection = container;
     this.#header = header;

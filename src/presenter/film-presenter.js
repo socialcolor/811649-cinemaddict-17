@@ -1,6 +1,7 @@
 import {render, remove, replace} from '../framework/render';
 import FilmItemView from '../view/film-item-view';
 import FilmDetailsView from '../view/film-details-view';
+import {setScrollPosition} from '../utils/film';
 
 export default class FilmPresenter {
   #comments = null;
@@ -11,6 +12,7 @@ export default class FilmPresenter {
   #film = null;
   #filmView = null;
   #filmDetailsView = null;
+  #scrollPosition = null;
 
   constructor (comments, container, controlsChange, closePopup) {
     this.#comments = [...comments];
@@ -21,7 +23,6 @@ export default class FilmPresenter {
 
   init = (film) => {
     this.#film = film;
-
     const prevFilmView = this.#filmView;
 
     this.#filmView = new FilmItemView(film);
@@ -48,7 +49,6 @@ export default class FilmPresenter {
   #renderDetails = () => {
     const prevFilmDetailsView = this.#filmDetailsView;
     this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
-
     this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
     this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
@@ -58,6 +58,7 @@ export default class FilmPresenter {
       render(this.#filmDetailsView, document.body);
     } else {
       replace(this.#filmDetailsView, prevFilmDetailsView);
+      setScrollPosition(this.#filmDetailsView.element, this.#scrollPosition);
     }
   };
 
@@ -89,9 +90,10 @@ export default class FilmPresenter {
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
-  #onWatchListClick = () => {
+  #onWatchListClick = (scrollPostion) => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
+    this.#scrollPosition = scrollPostion;
     this.#changeData(change);
   };
 
