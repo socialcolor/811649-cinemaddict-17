@@ -49,7 +49,7 @@ export default class FilmPresenter {
   #renderDetails = () => {
     const prevFilmDetailsView = this.#filmDetailsView;
     this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
-    this.#filmDetailsView.seCloseButtonHandler(this.#onCloseClick);
+    this.#filmDetailsView.setCloseButtonHandler(this.#onCloseClick);
     this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
     this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);

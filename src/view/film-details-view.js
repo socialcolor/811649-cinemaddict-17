@@ -201,7 +201,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandler();
-    this.seCloseButtonHandler(this._callback.onCloseButtonClick);
+    this.setCloseButtonHandler(this._callback.onCloseButtonClick);
     this.setWatchlistHandler(this._callback.onWatchlistClick);
     this.setWatchedHandler(this._callback.onWatchlistClick);
     this.setFavoriteHandler(this._callback.onFavoriteClick);
@@ -218,7 +218,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
   };
 
-  seCloseButtonHandler (callback) {
+  setCloseButtonHandler (callback) {
     this._callback.onCloseButtonClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onCloseButtonClick);
   }
