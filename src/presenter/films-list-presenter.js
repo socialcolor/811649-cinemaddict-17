@@ -10,6 +10,7 @@ import FilmListContainerView from '../view/film-list-container-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 import FilmListEmptyView from '../view/film-list-empty-view';
+import FooterStatView from '../view/footer-stat-view';
 import {updateItem} from '../utils/utils';
 import {FILM_COUNT_PER_STEP, TOP_RATED_FILMS, MOST_COMMENTS_FILMS, SORT_TYPE, FILTERS_TYPE, EMPTY_TEXT} from '../const';
 import dayjs from 'dayjs';
@@ -17,6 +18,7 @@ import dayjs from 'dayjs';
 export default class FilmsListPresenter {
   #mainSection = null;
   #header = null;
+  #footer = null;
   #filmModel = null;
   #filterPresenter = null;
   #filmPresenters = new Map();
@@ -42,9 +44,10 @@ export default class FilmsListPresenter {
   #filtresSortByDefault = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
-  constructor (container, header, filmsModel) {
+  constructor (container, header, footer, filmsModel) {
     this.#mainSection = container;
     this.#header = header;
+    this.#footer = footer;
     this.#filmModel = filmsModel;
   }
 
@@ -54,7 +57,8 @@ export default class FilmsListPresenter {
     this.#comments = [...this.#filmModel.comments];
 
     this.#filterFilms();
-    this.#renderFilmsBoard();
+    render(new FooterStatView(this.#filmModel.films.length), this.#footer);
+    this.#renderFilmsBoard(this.#filmModel.films.length);
   };
 
   changeData = (data) => {
@@ -103,7 +107,6 @@ export default class FilmsListPresenter {
     this.#renderFilmsBoard();
   };
 
-  //Если эту функцию выносить в отдельный файл filter.js, мне придется 4 параметра создавать, мне кажется лучше ее оставить здесь
   #filterFilms = () => {
     this.#watchlistFilms = this.#sourceFilms.filter((film) => film.userDetails.watchlist);
     this.#alreadyWatchedFilms = this.#sourceFilms.filter((film) => film.userDetails.alreadyWatched);
@@ -125,7 +128,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  //Тут такая же история, но уже 3 параметра
   #getCountFilmsInFilters = () => ({
     watchlist: this.#watchlistFilms.length,
     alreadyWatched: this.#alreadyWatchedFilms.length,
@@ -141,7 +143,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  //А тут целых 6 параметров, 1. this.#currentFilter, 2. this.#films, 3. this.#watchlistFilms, 4. this.#alreadyWatchedFilms, 5. this.#favoriteFilms, 6. this.#sourceFilms
   #setFilteredFilms = () => {
     switch (this.#currentFilter) {
       case FILTERS_TYPE.WATCHLIST:
@@ -159,7 +160,6 @@ export default class FilmsListPresenter {
     }
   };
 
-  //Такая же история
   #setSortedFilms = () => {
     switch (this.#currentSort) {
       case SORT_TYPE.RATING:
@@ -169,7 +169,7 @@ export default class FilmsListPresenter {
         this.#films.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
         break;
       case SORT_TYPE.DEFAULT:
-        if(this.#films.length === this.#filtresSortByDefault.length) { //Эта проверка нужна, чтобы если мы убрали из фильтра фильмы, при переключении на sort by default, у нас не возращались все фильмы которые мы удалили из фильтра.
+        if(this.#films.length === this.#filtresSortByDefault.length) {
           this.#films = this.#currentFilter !== FILTERS_TYPE.ALL ?  this.#films = [...this.#filtresSortByDefault] :  this.#films = [...this.#sourceFilms];
         }
         break;
@@ -249,7 +249,7 @@ export default class FilmsListPresenter {
     if(this.#films.length > 0) {
       render(new FilmListTitleView(), this.#filmList.element);
       render(this.#filmListContainer, this.#filmList.element);
-      const renderLength = Math.min(this.#films.length, this.#renderedFilmCount);
+      const renderLength = this.#films.length > FILM_COUNT_PER_STEP ? this.#renderedFilmCount : this.#films.length;
 
       for (let i = 0; i < renderLength; i++) {
         this.#renderFilm(this.#films[i]);
@@ -266,7 +266,7 @@ export default class FilmsListPresenter {
   };
 
   #renderShowMoreButton = () => {
-    if(this.#films.length > FILM_COUNT_PER_STEP) {
+    if(this.#films.length > FILM_COUNT_PER_STEP && this.#renderedFilmCount < this.#films.length) {
       this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
       render(this.#showMoreButton, this.#filmList.element);
     }
@@ -309,11 +309,10 @@ export default class FilmsListPresenter {
     if (this.#films.length === 0) {
       this.#removeSort();
       this.#rednerFilmListEmpty();
-    } else {
-      this.#renderFilms(this.#films);
-      this.#renderShowMoreButton(this.#films);
-      this.#renderExtraBlock();
+      return;
     }
-
+    this.#renderFilms(this.#films);
+    this.#renderShowMoreButton(this.#films);
+    this.#renderExtraBlock();
   };
 }

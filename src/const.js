@@ -85,6 +85,7 @@ const EMOTIONS = [
   'puke',
   'angry'
 ];
+
 export {
   FILM_LENGTH,
   COMMENTS_LENGTH,
