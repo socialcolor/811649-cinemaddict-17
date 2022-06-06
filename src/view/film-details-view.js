@@ -190,12 +190,12 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #emojiHandler = (evt) => {
     if(evt.target.tagName === 'INPUT') {
       const emoji = evt.target.value;
-      const scroll = getScrollPosition(this.element);
+      const scrollPosition = getScrollPosition(this.element);
       this.updateElement({
         emoji: emoji,
       });
 
-      setScrollPosition(this.element, scroll);
+      setScrollPosition(this.element, scrollPosition);
     }
   };
 
