@@ -43,6 +43,7 @@ export default class FilmsListPresenter {
   #favoriteFilms = [];
   #filtresSortByDefault = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+
   constructor (container, header, footer, filmsModel) {
     this.#mainSection = container;
     this.#header = header;
@@ -308,11 +309,10 @@ export default class FilmsListPresenter {
     if (this.#films.length === 0) {
       this.#removeSort();
       this.#rednerFilmListEmpty();
-    } else {
-      this.#renderFilms(this.#films);
-      this.#renderShowMoreButton(this.#films);
-      this.#renderExtraBlock();
+      return;
     }
-
+    this.#renderFilms(this.#films);
+    this.#renderShowMoreButton(this.#films);
+    this.#renderExtraBlock();
   };
 }

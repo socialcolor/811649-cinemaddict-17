@@ -66,7 +66,7 @@ const generateFilms = () => {
             releaseCountry: COUNTRIES[getRandomInteger(0, COUNTRIES.length - 1)]
           },
           runtime: getRandomInteger(70, 150),
-          genre: GENRES[getRandomInteger(1, 3)],
+          genre: [GENRES[getRandomInteger(1, 3)]],
           description: generateDescription(),
         },
         userDetails: {

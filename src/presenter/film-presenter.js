@@ -23,6 +23,7 @@ export default class FilmPresenter {
 
   init = (film) => {
     this.#film = film;
+
     const prevFilmView = this.#filmView;
 
     this.#filmView = new FilmItemView(film);
@@ -97,15 +98,17 @@ export default class FilmPresenter {
     this.#changeData(change);
   };
 
-  #onWatchedClick = () => {
+  #onWatchedClick = (scrollPostion) => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
+    this.#scrollPosition = scrollPostion;
     this.#changeData(change);
   };
 
-  #onFavoriteClick = () => {
+  #onFavoriteClick = (scrollPostion) => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
+    this.#scrollPosition = scrollPostion;
     this.#changeData(change);
   };
 

@@ -42,9 +42,13 @@ const createFilmDetailsTemplate = (film, filmComments) => {
     return commentsList;
   };
 
+  const createGenresList = filmInfo.genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('');
+
   const AddEmojiTemplate = emoji ? createAddEmojiTemplate(emoji) : '';
 
   const emojiTemplate = createEmojiTemplate(emoji);
+
+  const genreTitleTemplate = filmInfo.genre.length > 1 ? 'Genres' : 'Genre';
 
   return  `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -97,9 +101,9 @@ const createFilmDetailsTemplate = (film, filmComments) => {
                 <td class="film-details__cell">${filmInfo.release.releaseCountry}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">${genreTitleTemplate}</td>
                 <td class="film-details__cell">
-                  <span class="film-details__genre">${filmInfo.genre}</span></td>
+                  <span class="film-details__genre">${createGenresList}</span></td>
               </tr>
             </table>
 
@@ -169,12 +173,14 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
-    this._callback.onWatchedClick();
+    const scrollPostion = this.#getScrollPosituin();
+    this._callback.onWatchedClick(scrollPostion);
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
-    this._callback.onFavoriteClick();
+    const scrollPostion = this.#getScrollPosituin();
+    this._callback.onFavoriteClick(scrollPostion);
   };
 
   #commentHandler = (evt) => {
@@ -194,7 +200,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
       });
 
       setScrollPosition(this.element, scroll);
-      console.log(FilmDetailsView.pareStateToFilm(this._state))
     }
   };
 
@@ -206,6 +211,12 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.setWatchlistHandler(this._callback.onWatchlistClick);
     this.setWatchedHandler(this._callback.onWatchlistClick);
     this.setFavoriteHandler(this._callback.onFavoriteClick);
+  };
+
+  reset = (film) => {
+    this.updateElement(
+      FilmDetailsView.parseFilmToState(film),
+    );
   };
 
   #setInnerHandler = () => {
