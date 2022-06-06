@@ -10,6 +10,7 @@ import FilmListContainerView from '../view/film-list-container-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 import FilmListEmptyView from '../view/film-list-empty-view';
+import FooterStatView from '../view/footer-stat-view';
 import {updateItem} from '../utils/utils';
 import {FILM_COUNT_PER_STEP, TOP_RATED_FILMS, MOST_COMMENTS_FILMS, SORT_TYPE, FILTERS_TYPE, EMPTY_TEXT} from '../const';
 import dayjs from 'dayjs';
@@ -17,6 +18,7 @@ import dayjs from 'dayjs';
 export default class FilmsListPresenter {
   #mainSection = null;
   #header = null;
+  #footer = null;
   #filmModel = null;
   #filterPresenter = null;
   #filmPresenters = new Map();
@@ -41,9 +43,10 @@ export default class FilmsListPresenter {
   #favoriteFilms = [];
   #filtresSortByDefault = [];
   #renderedFilmCount = FILM_COUNT_PER_STEP;
-  constructor (container, header, filmsModel) {
+  constructor (container, header, footer, filmsModel) {
     this.#mainSection = container;
     this.#header = header;
+    this.#footer = footer;
     this.#filmModel = filmsModel;
   }
 
@@ -53,7 +56,8 @@ export default class FilmsListPresenter {
     this.#comments = [...this.#filmModel.comments];
 
     this.#filterFilms();
-    this.#renderFilmsBoard();
+    render(new FooterStatView(this.#filmModel.films.length), this.#footer);
+    this.#renderFilmsBoard(this.#filmModel.films.length);
   };
 
   changeData = (data) => {
