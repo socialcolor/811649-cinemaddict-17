@@ -1,6 +1,7 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {formatDate, formatTime} from '../utils/utils';
 import {setScrollPosition} from '../utils/film';
+import { EMOTIONS } from '../const';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
   const {filmInfo, comments, userDetails, emoji, comment} = film;
@@ -10,9 +11,6 @@ const createFilmDetailsTemplate = (film, filmComments) => {
   const favorite = userDetails.favorite ? 'film-details__control-button--active' : '';
 
   const commentText = comment ? comment : '';
-
-  const createEmojiTemplate = (url) => `<img src="./images/emoji/${url}.png" width="55" height="55" alt="emoji-smile"></img>`;
-  const emojiTemplate = emoji ? createEmojiTemplate(emoji) : '';
 
   const createCommentTemplate = (data) => (`<li class="film-details__comment">
      <span class="film-details__comment-emoji">
@@ -28,14 +26,25 @@ const createFilmDetailsTemplate = (film, filmComments) => {
      </div>
    </li>`);
 
+  const createAddEmojiTemplate = (url) => `<img src="./images/emoji/${url}.png" width="55" height="55" alt="emoji-smile"></img>`;
+
+  const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden"
+   name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"} ${currentEmoji === emotion ? 'checked': ''}>
+     <label class="film-details__emoji-label" for="emoji-${emotion}">
+       <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
+     </label>`).join('');
+
   const comentsTemplate = () => {
     let commentsList = '';
-    for(let i = 0; i < comments.length; i++) {
-      const commentsId = comments[i];
-      commentsList += createCommentTemplate(filmComments[commentsId]);
+    for(const commentId of comments) {
+      commentsList += createCommentTemplate(filmComments.find((it) => it.id === commentId));
     }
     return commentsList;
   };
+
+  const AddEmojiTemplate = emoji ? createAddEmojiTemplate(emoji) : '';
+
+  const emojiTemplate = createEmojiTemplate(emoji);
 
   return  `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -116,33 +125,13 @@ const createFilmDetailsTemplate = (film, filmComments) => {
           </ul>
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label">${emojiTemplate}</div>
+            <div class="film-details__add-emoji-label">${AddEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
               <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
             </label>
 
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emoji === 'smile' ? 'checked' : ''}>
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emoji === 'sleeping' ? 'checked' : ''}>
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke" ${emoji === 'puke' ? 'checked' : ''}>
-              <label class="film-details__emoji-label" for="emoji-puke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emoji === 'angry' ? 'checked' : ''}>
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
+            <div class="film-details__emoji-list">${emojiTemplate}</div>
           </div>
         </section>
       </div>
@@ -205,6 +194,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
       });
 
       setScrollPosition(this.element, scroll);
+      console.log(FilmDetailsView.pareStateToFilm(this._state))
     }
   };
 
@@ -243,8 +233,23 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
   }
 
-  static parseFilmToState = (films) => ({...films,
+  static parseFilmToState = (film) => ({...film,
     emoji: null,
     comment: null,
   });
+
+  static pareStateToFilm = (state) => {
+    const localComment = {
+      localComment : {
+        emoji: state.emoji,
+        comment: state.comment,
+      }
+    };
+    const film = {...state, ...{localComment}};
+
+    delete film.emoji;
+    delete film.comment;
+
+    return film;
+  };
 }
