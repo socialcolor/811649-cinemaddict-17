@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {formatDate, formatTime} from '../utils/utils';
-import {setScrollPosition} from '../utils/film';
+import {setScrollPosition, getScrollPosition} from '../utils/film';
 import { EMOTIONS } from '../const';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
@@ -145,7 +145,6 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 
 export default class FilmDetailsView extends AbstractStatefulView {
   #comments = null;
-  #scrollPosition = null;
 
   constructor (film, comments) {
     super();
@@ -167,20 +166,17 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   #onWatchlistClick = (evt) => {
     evt.preventDefault();
-    const scrollPostion = this.#getScrollPosituin();
-    this._callback.onWatchlistClick(scrollPostion);
+    this._callback.onWatchlistClick();
   };
 
   #onWatchedClick = (evt) => {
     evt.preventDefault();
-    const scrollPostion = this.#getScrollPosituin();
-    this._callback.onWatchedClick(scrollPostion);
+    this._callback.onWatchedClick();
   };
 
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
-    const scrollPostion = this.#getScrollPosituin();
-    this._callback.onFavoriteClick(scrollPostion);
+    this._callback.onFavoriteClick();
   };
 
   #commentHandler = (evt) => {
@@ -194,7 +190,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #emojiHandler = (evt) => {
     if(evt.target.tagName === 'INPUT') {
       const emoji = evt.target.value;
-      const scroll = this.#getScrollPosituin();
+      const scroll = getScrollPosition(this.element);
       this.updateElement({
         emoji: emoji,
       });
@@ -202,8 +198,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
       setScrollPosition(this.element, scroll);
     }
   };
-
-  #getScrollPosituin = () => (this.#scrollPosition = this.element.scrollTop);
 
   _restoreHandlers = () => {
     this.#setInnerHandler();

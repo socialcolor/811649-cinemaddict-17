@@ -2,4 +2,6 @@ const setScrollPosition = (element, scrollPosition) => {
   element.scrollTop = scrollPosition;
 };
 
-export {setScrollPosition};
+const getScrollPosition = (elementScrollPosition) => elementScrollPosition.scrollTop;
+
+export {setScrollPosition, getScrollPosition};

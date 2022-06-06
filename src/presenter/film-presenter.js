@@ -1,7 +1,7 @@
 import {render, remove, replace} from '../framework/render';
 import FilmItemView from '../view/film-item-view';
 import FilmDetailsView from '../view/film-details-view';
-import {setScrollPosition} from '../utils/film';
+import {setScrollPosition, getScrollPosition} from '../utils/film';
 
 export default class FilmPresenter {
   #comments = null;
@@ -12,7 +12,6 @@ export default class FilmPresenter {
   #film = null;
   #filmView = null;
   #filmDetailsView = null;
-  #scrollPosition = null;
 
   constructor (comments, container, controlsChange, closePopup) {
     this.#comments = [...comments];
@@ -59,7 +58,7 @@ export default class FilmPresenter {
       render(this.#filmDetailsView, document.body);
     } else {
       replace(this.#filmDetailsView, prevFilmDetailsView);
-      setScrollPosition(this.#filmDetailsView.element, this.#scrollPosition);
+      // setScrollPosition(this.#filmDetailsView.element, this.#scrollPosition);
     }
   };
 
@@ -91,25 +90,28 @@ export default class FilmPresenter {
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 
-  #onWatchListClick = (scrollPostion) => {
+  #onWatchListClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    this.#scrollPosition = scrollPostion;
+    const scrollPosition = getScrollPosition(this.#filmDetailsView.element);
     this.#changeData(change);
+    setScrollPosition(this.#filmDetailsView.element, scrollPosition);
   };
 
-  #onWatchedClick = (scrollPostion) => {
+  #onWatchedClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    this.#scrollPosition = scrollPostion;
+    const scrollPosition = getScrollPosition(this.#filmDetailsView.element);
     this.#changeData(change);
+    setScrollPosition(this.#filmDetailsView.element, scrollPosition);
   };
 
-  #onFavoriteClick = (scrollPostion) => {
+  #onFavoriteClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    this.#scrollPosition = scrollPostion;
+    const scrollPosition = getScrollPosition(this.#filmDetailsView.element);
     this.#changeData(change);
+    setScrollPosition(this.#filmDetailsView.element, scrollPosition);
   };
 
 }
