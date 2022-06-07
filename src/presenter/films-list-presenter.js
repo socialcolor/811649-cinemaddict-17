@@ -1,6 +1,7 @@
 import {render, remove, replace} from '../framework/render';
 import FilmPresenter from './film-presenter';
 import FilterPresenter from './filter-presenter';
+import FilmDetailsPresenter from './film-details-presenter';
 import FilmSortView from '../view/film-sort-view';
 import RateView from '../view/rate-view';
 import FilmSectionView from '../view/film-section-view';
@@ -21,6 +22,7 @@ export default class FilmsListPresenter {
   #footer = null;
   #filmModel = null;
   #filterPresenter = null;
+  #filmDetailsPresenter = null;
   #filmPresenters = new Map();
 
   #currentFilter = FILTERS_TYPE.ALL;
@@ -78,6 +80,11 @@ export default class FilmsListPresenter {
       this.#clearFilmsBoard();
       this.#renderFilmsBoard();
     }
+
+    //эта проверка нужна чтобы если при открытом попапе нажали в списке фильмов на кнопки другого фильма, он бы не открывался.
+    if (data.id === this.#filmDetailsPresenter.film.id) {
+      this.#filmDetailsPresenter.init(data, this.#comments);
+    }
   };
 
   changeFilter = (activeFilter) => {
@@ -118,7 +125,7 @@ export default class FilmsListPresenter {
     this.#films
       .slice(this.#renderedFilmCount, this.#renderedFilmCount + FILM_COUNT_PER_STEP)
       .forEach((film) => {
-        const filmPresenter = new FilmPresenter(this.#comments, this.#filmListContainer.element, this.changeData, this.#closePopup);
+        const filmPresenter = new FilmPresenter(this.#filmListContainer.element, this.changeData, this.#openDetailsFilm);
         this.#setFilmPresenter(film.id, filmPresenter);
         filmPresenter.init(film);
       });
@@ -177,7 +184,18 @@ export default class FilmsListPresenter {
     }
   };
 
-  #closePopup = () => this.#filmPresenters.forEach((presenters) => presenters.forEach((presenter) => presenter.closePopup()));
+  #openDetailsFilm = (film) => {
+    if(!this.#filmDetailsPresenter) {
+      this.#filmDetailsPresenter = new FilmDetailsPresenter(this.changeData);
+      this.#filmDetailsPresenter.init(film, this.#comments);
+    }
+    this.#filmDetailsPresenter.init(film, this.#comments);
+  };
+
+  closePopup = () => {
+    this.#filmDetailsPresenter.closePopup();
+    this.#filmDetailsPresenter = null;
+  };
 
   #removeFilmsListEmpty = () => remove(this.#filmListEmpty);
 
@@ -240,8 +258,8 @@ export default class FilmsListPresenter {
     }
   };
 
-  #renderFilm = (film) => {
-    const filmPresenter = new FilmPresenter(this.#comments, this.#filmListContainer.element, this.changeData, this.#closePopup);
+  #renderFilm = (film, container) => {
+    const filmPresenter = new FilmPresenter(container, this.changeData, this.#openDetailsFilm);
     this.#setFilmPresenter(film.id, filmPresenter);
     filmPresenter.init(film);
   };
@@ -253,7 +271,7 @@ export default class FilmsListPresenter {
       const renderLength = this.#films.length > FILM_COUNT_PER_STEP ? this.#renderedFilmCount : this.#films.length;
 
       for (let i = 0; i < renderLength; i++) {
-        this.#renderFilm(this.#films[i]);
+        this.#renderFilm(this.#films[i], this.#filmListContainer.element);
       }
       this.#renderedFilmCount = renderLength;
     }
@@ -282,20 +300,14 @@ export default class FilmsListPresenter {
     if(topRateFimls.length) {
       render(this.#topRated, this.#filmSection.element);
       for(let i = 0; i < TOP_RATED_FILMS; i++) {
-        const filmTopRatePresenter = new FilmPresenter(this.#comments, this.#topRated.element.querySelector('.films-list__container'), this.changeData, this.#closePopup);
-        const topRatedFilm = topRateFimls[i];
-        this.#setFilmPresenter(topRatedFilm.id, filmTopRatePresenter);
-        filmTopRatePresenter.init(topRatedFilm);
+        this.#renderFilm(topRateFimls[i], this.#topRated.element.querySelector('.films-list__container'));
       }
     }
 
     if(mostCommentsFilms.length) {
       render(this.#mostComment, this.#filmSection.element);
       for(let i = 0; i < MOST_COMMENTS_FILMS; i++) {
-        const filmMostCommentedPrestner = new FilmPresenter(this.#comments, this.#mostComment.element.querySelector('.films-list__container'), this.changeData, this.#closePopup);
-        const mostCommentedFilm = mostCommentsFilms[i];
-        this.#setFilmPresenter(mostCommentedFilm.id, filmMostCommentedPrestner);
-        filmMostCommentedPrestner.init(mostCommentedFilm);
+        this.#renderFilm(mostCommentsFilms[i], this.#mostComment.element.querySelector('.films-list__container'));
       }
     }
   };
