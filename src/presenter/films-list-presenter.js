@@ -81,7 +81,6 @@ export default class FilmsListPresenter {
       this.#renderFilmsBoard();
     }
 
-    //эта проверка нужна чтобы если при открытом попапе нажали в списке фильмов на кнопки другого фильма, он бы не открывался.
     if (data.id === this.#filmDetailsPresenter.film.id) {
       this.#filmDetailsPresenter.init(data, this.#comments);
     }

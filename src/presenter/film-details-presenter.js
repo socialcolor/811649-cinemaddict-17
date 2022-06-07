@@ -6,6 +6,7 @@ export default class FilmDetailsPresenter {
   film = null;
   #comments = null;
   #changeData = null;
+  #localComment = null;
 
   #filmDetailsView = null;
 
@@ -26,13 +27,14 @@ export default class FilmDetailsPresenter {
       remove(this.#filmDetailsView);
       document.removeEventListener('keydown', this.#onEscKeyDown);
       this.#filmDetailsView = null;
+      this.#localComment = null;
     }
   }
 
   #renderDetails = () => {
     const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
     const prevFilmDetailsView = this.#filmDetailsView;
-    this.#filmDetailsView = new FilmDetailsView(this.film, this.#comments);
+    this.#filmDetailsView = new FilmDetailsView(this.film, this.#comments, this.#localComment);
 
     if(prevFilmDetailsView === null) {
       render(this.#filmDetailsView, document.body);
@@ -68,7 +70,8 @@ export default class FilmDetailsPresenter {
     }
   };
 
-  #onWatchListClick = () => {
+  #onWatchListClick = (localComment) => {
+    this.#localComment = localComment;
     const userDetails = this.film.userDetails;
     const change = {...this.film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
     const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
@@ -76,7 +79,8 @@ export default class FilmDetailsPresenter {
     this.#scrollDetails(scrollPosition);
   };
 
-  #onWatchedClick = () => {
+  #onWatchedClick = (localComment) => {
+    this.#localComment = localComment;
     const userDetails = this.film.userDetails;
     const change = {...this.film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
     const scrollPosition = this.filmDetailsView ? getScrollPosition(this.filmDetailsView.element) : null;
@@ -84,7 +88,8 @@ export default class FilmDetailsPresenter {
     this.#scrollDetails(scrollPosition);
   };
 
-  #onFavoriteClick = () => {
+  #onFavoriteClick = (localComment) => {
+    this.#localComment = localComment;
     const userDetails = this.film.userDetails;
     const change = {...this.film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
     const scrollPosition = this.filmDetailsView ? getScrollPosition(this.filmDetailsView.element) : null;
