@@ -14,13 +14,13 @@ export default class FilmDetailsPresenter {
     this.#changeData = controlsChange;
   }
 
-  init (film, comments) {
+  init = (film, comments) => {
     this.film = {...film};
     this.#comments = [...comments];
     this.#renderDetails();
-  }
+  };
 
-  closePopup () {
+  closePopup = () => {
     if(this.#filmDetailsView) {
       document.body.classList.remove('hide-overflow');
       this.#filmDetailsView.element.querySelector('.film-details__close-btn').removeEventListener('click', this.#onCloseClick);
@@ -29,7 +29,7 @@ export default class FilmDetailsPresenter {
       this.#filmDetailsView = null;
       this.#localComment = null;
     }
-  }
+  };
 
   #renderDetails = () => {
     const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;

@@ -54,6 +54,14 @@ export default class FilmsListPresenter {
     this.#filmModel = filmsModel;
   }
 
+  get films() {
+    return  this.#filmModel.films;
+  }
+
+  get comments() {
+    return  this.#filmModel.comments;
+  }
+
   init = () => {
     this.#films = [...this.#filmModel.films];
     this.#sourceFilms = [...this.#filmModel.films];
