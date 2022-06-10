@@ -5,7 +5,6 @@ import { EMOTIONS } from '../const';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
   const {filmInfo, comments, userDetails, emoji, comment} = film;
-
   const watchlist = userDetails.watchlist ? 'film-details__control-button--active' : '';
   const alreadyWatched = userDetails.alreadyWatched  ? 'film-details__control-button--active' : '';
   const favorite = userDetails.favorite ? 'film-details__control-button--active' : '';

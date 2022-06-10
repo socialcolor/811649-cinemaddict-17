@@ -1,5 +1,6 @@
 import {render, remove, replace} from '../framework/render';
 import FilmItemView from '../view/film-item-view';
+import {UserAction, UpdateType} from '../const.js';
 
 export default class FilmPresenter {
   #container = null;
@@ -45,18 +46,18 @@ export default class FilmPresenter {
   #onWatchListClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    this.#changeData(change);
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 
   #onWatchedClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    this.#changeData(change);
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 
   #onFavoriteClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    this.#changeData(change);
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 }

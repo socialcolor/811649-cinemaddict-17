@@ -1,5 +1,5 @@
 const FILM_COUNT_PER_STEP = 5;
-const FILM_LENGTH = 15;
+const FILM_LENGTH = 7;
 const COMMENTS_LENGTH = 10;
 const TOP_RATED_FILMS = 2;
 const MOST_COMMENTS_FILMS = 2;
@@ -86,6 +86,22 @@ const EMOTIONS = [
   'angry'
 ];
 
+const UserAction = {
+  OPEN_POPUP: 'OPEN_POPUP',
+  UPDATE_FILM: 'UPDATE_FILM',
+  UPDATE_WATCHLIST: 'UPDATE_WATCHLIST',
+  UPDATE_HISTORY: 'UPDATE_HISTORY',
+  UPDATE_FAVORITE: 'UPDATE_FAVORITE',
+  ADD_COMMENT: 'ADD_COMMENT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
 export {
   FILM_LENGTH,
   COMMENTS_LENGTH,
@@ -102,5 +118,7 @@ export {
   FILTERS_TYPE,
   RATES,
   SORT_TYPE,
-  EMPTY_TEXT
+  EMPTY_TEXT,
+  UserAction,
+  UpdateType
 };
