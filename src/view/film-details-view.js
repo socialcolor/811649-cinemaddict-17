@@ -164,12 +164,63 @@ export default class FilmDetailsView extends AbstractStatefulView {
     return createFilmDetailsTemplate(this._state, this.#comments);
   }
 
+  _restoreHandlers = () => {
+    this.#setInnerHandler();
+    this.setCloseButtonHandler(this._callback.onCloseButtonClick);
+    this.setWatchlistHandler(this._callback.onWatchlistClick);
+    this.setWatchedHandler(this._callback.onWatchlistClick);
+    this.setFavoriteHandler(this._callback.onFavoriteClick);
+  };
+
+  reset = (film) => {
+    this.updateElement(
+      FilmDetailsView.parseFilmToState(film),
+    );
+  };
+
+  setCloseButtonHandler (callback) {
+    this._callback.onCloseButtonClick = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onCloseButtonClick);
+  }
+
+  setWatchlistHandler(callback) {
+    this._callback.onWatchlistClick = callback;
+    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#onWatchlistClick);
+  }
+
+  setWatchedHandler(callback) {
+    this._callback.onWatchedClick = callback;
+    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#onWatchedClick);
+  }
+
+  setFavoriteHandler(callback) {
+    this._callback.onFavoriteClick = callback;
+    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
+  }
+
   #restoreLocalComment = () => {
     this.updateElement({
       emoji: this.#localComment.emoji,
       comment: this.#localComment.comment,
     });
 
+  };
+
+  #setInnerHandler = () => {
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#onCommentChange);
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
+  };
+
+  #emojiHandler = (evt) => {
+    if(evt.target.tagName === 'INPUT') {
+      const emoji = evt.target.value;
+      const scrollPosition = getScrollPosition(this.element);
+      this.updateElement({
+        emoji: emoji,
+      });
+
+      setScrollPosition(this.element, scrollPosition);
+    }
   };
 
   #onCloseButtonClick = (evt) => {
@@ -192,64 +243,13 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._callback.onFavoriteClick(FilmDetailsView.parseStateToFilm(this._state));
   };
 
-  #commentHandler = (evt) => {
+  #onCommentChange = (evt) => {
     evt.preventDefault();
 
     this._setState({
       comment: evt.target.value,
     });
   };
-
-  #emojiHandler = (evt) => {
-    if(evt.target.tagName === 'INPUT') {
-      const emoji = evt.target.value;
-      const scrollPosition = getScrollPosition(this.element);
-      this.updateElement({
-        emoji: emoji,
-      });
-
-      setScrollPosition(this.element, scrollPosition);
-    }
-  };
-
-  _restoreHandlers = () => {
-    this.#setInnerHandler();
-    this.setCloseButtonHandler(this._callback.onCloseButtonClick);
-    this.setWatchlistHandler(this._callback.onWatchlistClick);
-    this.setWatchedHandler(this._callback.onWatchlistClick);
-    this.setFavoriteHandler(this._callback.onFavoriteClick);
-  };
-
-  reset = (film) => {
-    this.updateElement(
-      FilmDetailsView.parseFilmToState(film),
-    );
-  };
-
-  #setInnerHandler = () => {
-    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentHandler);
-    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
-  };
-
-  setCloseButtonHandler (callback) {
-    this._callback.onCloseButtonClick = callback;
-    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onCloseButtonClick);
-  }
-
-  setWatchlistHandler(callback) {
-    this._callback.onWatchlistClick = callback;
-    this.element.querySelector('.film-details__control-button--watchlist').addEventListener('click', this.#onWatchlistClick);
-  }
-
-  setWatchedHandler(callback) {
-    this._callback.onWatchedClick = callback;
-    this.element.querySelector('.film-details__control-button--watched').addEventListener('click', this.#onWatchedClick);
-  }
-
-  setFavoriteHandler(callback) {
-    this._callback.onFavoriteClick = callback;
-    this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
-  }
 
   static parseFilmToState = (film) => ({...film,
     emoji: null,

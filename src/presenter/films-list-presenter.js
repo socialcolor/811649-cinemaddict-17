@@ -56,7 +56,7 @@ export default class FilmsListPresenter {
 
   get films() {
     const filterType = this.#filterModel.filter;
-    const films = this.#filmsModel.films;
+    const films = [...this.#filmsModel.films];
     const filtredFilms = filter[filterType](films);
 
     switch (this.#currentSort) {
@@ -65,9 +65,10 @@ export default class FilmsListPresenter {
       case SORT_TYPE.DATE:
         return filtredFilms.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
       case SORT_TYPE.DEFAULT:
+      default:
         return filtredFilms;
     }
-    return filtredFilms;
+
   }
 
   get comments() {
@@ -88,16 +89,18 @@ export default class FilmsListPresenter {
     }
   };
 
-  closePopup = () => {
-    this.#filmDetailsPresenter.closePopup();
-    this.#filmDetailsPresenter = null;
+  #closePopup = () => {
+    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+      this.#filmDetailsPresenter.closePopup();
+      this.#filmDetailsPresenter = null;
+    }
   };
 
   #openPopup = (film) => {
-    if(!this.#filmDetailsPresenter) {
-      this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
-      this.#filmDetailsPresenter.init(film, this.comments);
+    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+      this.#closePopup();
     }
+    this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
     this.#filmDetailsPresenter.init(film, this.comments);
   };
 
@@ -134,12 +137,11 @@ export default class FilmsListPresenter {
   };
 
   #renderExtraBlock = () => {
-    this.#topRated = new FilmMostView('Top rated');
-    this.#mostComment = new FilmMostView('Most commented');
     const topRateFimls = [...this.#filmsModel.films].sort((a, b) => b.filmInfo.rate - a.filmInfo.rate);
     const mostCommentsFilms = [...this.#filmsModel.films].sort((a, b) => b.comments.length - a.comments.length);
 
     if(topRateFimls.length) {
+      this.#topRated = new FilmMostView('Top rated');
       render(this.#topRated, this.#filmSection.element);
       for(let i = 0; i < TOP_RATED_FILMS; i++) {
         this.#renderFilm(topRateFimls[i], this.#topRated.element.querySelector('.films-list__container'));
@@ -147,6 +149,7 @@ export default class FilmsListPresenter {
     }
 
     if(mostCommentsFilms.length) {
+      this.#mostComment = new FilmMostView('Most commented');
       render(this.#mostComment, this.#filmSection.element);
       for(let i = 0; i < MOST_COMMENTS_FILMS; i++) {
         this.#renderFilm(mostCommentsFilms[i], this.#mostComment.element.querySelector('.films-list__container'));
@@ -165,10 +168,10 @@ export default class FilmsListPresenter {
   };
 
   #renderFilmsBoard = () => {
-    const filmCount = this.films.length;
+    const films = this.films;
+    const filmCount = films.length;
 
     this.#renderUserRate();
-    // this.#renderFilter();
     this.#renderSort();
     render(this.#filmSection, this.#mainSection);
     render(this.#filmList, this.#filmSection.element);
@@ -176,19 +179,19 @@ export default class FilmsListPresenter {
     this.#filmTitle = new FilmListTitleView(this.#currentFilter);
     render(this.#filmTitle, this.#filmList.element);
 
-    if (this.films.length === 0) {
+    if (filmCount === 0) {
       remove(this.#sortView);
       this.#rednerFilmListEmpty();
-      return;
+    } else {
+      this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
+      this.#renderShowMoreButton();
     }
 
-    this.#renderFilms(this.films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
-    this.#renderShowMoreButton();
     this.#renderExtraBlock();
   };
 
   #clearFilmsBoard = ({resetRenderetFilmCount = false, resetSortType = false} = {}) => {
-    const filmCount = this.films.length;
+    // const filmCount = this.films.length;
 
     this.#filmPresenters.forEach((presenters) => presenters.forEach((presenter) => presenter.destroy()));
     this.#filmPresenters.clear();
@@ -200,8 +203,6 @@ export default class FilmsListPresenter {
 
     if(resetRenderetFilmCount) {
       this.#renderedFilmCount = FILM_COUNT_PER_STEP;
-    } else {
-      this.#renderedFilmCount = Math.min(filmCount, this.#renderedFilmCount);
     }
 
     if (resetSortType) {
@@ -220,9 +221,14 @@ export default class FilmsListPresenter {
   #onModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#filmPresenters.get(data.id).forEach((presenter) => presenter.init(data));
-        if(this.#filmDetailsPresenter) {
-          this.#openPopup(data);
+        if(this.#filterModel.filter === FILTERS_TYPE.ALL) {
+          this.#filmPresenters.get(data.id).forEach((presenter) => presenter.init(data));
+          if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+            this.#openPopup(data);
+          }
+        } else {
+          this.#clearFilmsBoard();
+          this.#renderFilmsBoard();
         }
         break;
       case UpdateType.MINOR:

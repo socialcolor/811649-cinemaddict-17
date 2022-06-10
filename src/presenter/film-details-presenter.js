@@ -7,6 +7,7 @@ export default class FilmDetailsPresenter {
   #film = null;
   #comments = null;
   #changeData = null;
+  #isOpened = false;
 
   #filmDetailsView = null;
 
@@ -20,6 +21,10 @@ export default class FilmDetailsPresenter {
     this.#renderDetails();
   };
 
+  get isOpened () {
+    return this.#isOpened;
+  }
+
   closePopup = () => {
     if(this.#filmDetailsView) {
       document.body.classList.remove('hide-overflow');
@@ -28,6 +33,7 @@ export default class FilmDetailsPresenter {
       document.removeEventListener('keydown', this.#onEscKeyDown);
       this.#filmDetailsView = null;
     }
+    this.#isOpened = false;
   };
 
   #renderDetails = () => {
@@ -50,6 +56,7 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
     this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);
+    this.#isOpened = true;
   };
 
   #scrollDetails = (scrollPosition) => {

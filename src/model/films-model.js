@@ -23,14 +23,4 @@ export default class FilmModel extends Observable {
 
     this._notify(updateType, update);
   };
-
-  addFilm = (updateType, update) => {
-    this.#films = [
-      update,
-      ...this.#films,
-    ];
-
-    this._notify(updateType, update);
-  };
-
 }

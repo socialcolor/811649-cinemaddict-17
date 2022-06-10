@@ -4,16 +4,16 @@ import {UserAction, UpdateType} from '../const.js';
 
 export default class FilmPresenter {
   #container = null;
-  #changeData = null;
   #openPopup = null;
+  #onViewAction = null;
 
   #film = null;
   #filmView = null;
 
-  constructor (container, controlsChange, openPopup) {
+  constructor (container, onViewAction, openPopup) {
     this.#container = container;
-    this.#changeData = controlsChange;
     this.#openPopup = openPopup;
+    this.#onViewAction = onViewAction;
   }
 
   init = (film) => {
@@ -46,18 +46,18 @@ export default class FilmPresenter {
   #onWatchListClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
+    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 
   #onWatchedClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
+    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 
   #onFavoriteClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
+    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 }
