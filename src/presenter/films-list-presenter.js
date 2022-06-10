@@ -191,8 +191,6 @@ export default class FilmsListPresenter {
   };
 
   #clearFilmsBoard = ({resetRenderetFilmCount = false, resetSortType = false} = {}) => {
-    // const filmCount = this.films.length;
-
     this.#filmPresenters.forEach((presenters) => presenters.forEach((presenter) => presenter.destroy()));
     this.#filmPresenters.clear();
     remove(this.#sortView);
@@ -223,12 +221,12 @@ export default class FilmsListPresenter {
       case UpdateType.PATCH:
         if(this.#filterModel.filter === FILTERS_TYPE.ALL) {
           this.#filmPresenters.get(data.id).forEach((presenter) => presenter.init(data));
-          if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
-            this.#openPopup(data);
-          }
         } else {
           this.#clearFilmsBoard();
           this.#renderFilmsBoard();
+        }
+        if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+          this.#openPopup(data);
         }
         break;
       case UpdateType.MINOR:

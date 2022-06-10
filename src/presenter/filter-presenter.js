@@ -63,10 +63,6 @@ export default class FilterPresenter {
     remove(prevFilterView);
   };
 
-  destroy = () => {
-    remove(this.#filterView);
-  };
-
   #onModelEvent = () => {
     this.init();
   };

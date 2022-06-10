@@ -1,5 +1,5 @@
 const FILM_COUNT_PER_STEP = 5;
-const FILM_LENGTH = 10;
+const FILM_LENGTH = 5;
 const COMMENTS_LENGTH = 10;
 const TOP_RATED_FILMS = 2;
 const MOST_COMMENTS_FILMS = 2;
