@@ -3,13 +3,13 @@ import {formatDate, formatTime} from '../utils/utils';
 import {setScrollPosition, getScrollPosition} from '../utils/film';
 import { EMOTIONS } from '../const';
 import dayjs from 'dayjs';
+import he from 'he';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
   const {filmInfo, comments, userDetails, emoji, comment} = film;
   const watchlist = userDetails.watchlist ? 'film-details__control-button--active' : '';
   const alreadyWatched = userDetails.alreadyWatched  ? 'film-details__control-button--active' : '';
   const favorite = userDetails.favorite ? 'film-details__control-button--active' : '';
-
   const commentText = comment ? comment : '';
 
   const createCommentTemplate = (data) => (`<li class="film-details__comment">
@@ -145,7 +145,6 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 
 export default class FilmDetailsView extends AbstractStatefulView {
   #comments = null;
-  #localComment = null;
 
   constructor (film, comments) {
     super();
@@ -270,7 +269,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     evt.preventDefault();
 
     this._setState({
-      comment: evt.target.value,
+      comment: he.encode(evt.target.value),
     });
   };
 
