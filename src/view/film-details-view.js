@@ -2,14 +2,14 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {formatDate, formatTime} from '../utils/utils';
 import {setScrollPosition, getScrollPosition} from '../utils/film';
 import { EMOTIONS } from '../const';
+import dayjs from 'dayjs';
+import he from 'he';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
   const {filmInfo, comments, userDetails, emoji, comment} = film;
-
   const watchlist = userDetails.watchlist ? 'film-details__control-button--active' : '';
   const alreadyWatched = userDetails.alreadyWatched  ? 'film-details__control-button--active' : '';
   const favorite = userDetails.favorite ? 'film-details__control-button--active' : '';
-
   const commentText = comment ? comment : '';
 
   const createCommentTemplate = (data) => (`<li class="film-details__comment">
@@ -21,7 +21,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
        <p class="film-details__comment-info">
          <span class="film-details__comment-author">${data.author}</span>
          <span class="film-details__comment-day">${formatDate(data.date, 'YYYY/MM/DD HH:mm')}</span>
-         <button class="film-details__comment-delete">Delete</button>
+         <button class="film-details__comment-delete" data-id="${data.id}">Delete</button>
        </p>
      </div>
    </li>`);
@@ -148,6 +148,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   constructor (film, comments) {
     super();
+
     this.#comments = comments;
 
     this._state = FilmDetailsView.parseFilmToState(film);
@@ -159,48 +160,10 @@ export default class FilmDetailsView extends AbstractStatefulView {
     return createFilmDetailsTemplate(this._state, this.#comments);
   }
 
-  #onCloseButtonClick = (evt) => {
-    evt.preventDefault();
-    this._callback.onCloseButtonClick();
-  };
-
-  #onWatchlistClick = (evt) => {
-    evt.preventDefault();
-    this._callback.onWatchlistClick();
-  };
-
-  #onWatchedClick = (evt) => {
-    evt.preventDefault();
-    this._callback.onWatchedClick();
-  };
-
-  #onFavoriteClick = (evt) => {
-    evt.preventDefault();
-    this._callback.onFavoriteClick();
-  };
-
-  #commentHandler = (evt) => {
-    evt.preventDefault();
-
-    this._setState({
-      comment: evt.target.value,
-    });
-  };
-
-  #emojiHandler = (evt) => {
-    if(evt.target.tagName === 'INPUT') {
-      const emoji = evt.target.value;
-      const scrollPosition = getScrollPosition(this.element);
-      this.updateElement({
-        emoji: emoji,
-      });
-
-      setScrollPosition(this.element, scrollPosition);
-    }
-  };
-
   _restoreHandlers = () => {
     this.#setInnerHandler();
+    this.setAddCommentHandler(this._callback.onAddCommentClick);
+    this.setDeleteCommentHandler(this._callback.onDeletingCommentClick);
     this.setCloseButtonHandler(this._callback.onCloseButtonClick);
     this.setWatchlistHandler(this._callback.onWatchlistClick);
     this.setWatchedHandler(this._callback.onWatchlistClick);
@@ -213,10 +176,15 @@ export default class FilmDetailsView extends AbstractStatefulView {
     );
   };
 
-  #setInnerHandler = () => {
-    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentHandler);
-    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
-  };
+  setAddCommentHandler (callback) {
+    this._callback.onAddCommentClick = callback;
+    this.element.querySelector('.film-details__inner').addEventListener('keydown', this.#onAddCommentClick);
+  }
+
+  setDeleteCommentHandler (callback) {
+    this._callback.onDeletingCommentClick = callback;
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#onDeletingCommentClick);
+  }
 
   setCloseButtonHandler (callback) {
     this._callback.onCloseButtonClick = callback;
@@ -238,19 +206,80 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.element.querySelector('.film-details__control-button--favorite').addEventListener('click', this.#onFavoriteClick);
   }
 
+  #setInnerHandler = () => {
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#onCommentChange);
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
+  };
+
+  #emojiHandler = (evt) => {
+    if(evt.target.tagName === 'INPUT') {
+      const emoji = evt.target.value;
+      const scrollPosition = getScrollPosition(this.element);
+      this.updateElement({
+        emoji: emoji,
+      });
+
+      setScrollPosition(this.element, scrollPosition);
+    }
+  };
+
+  #onAddCommentClick = (evt) => {
+    if(evt.ctrlKey && evt.key === 'Enter' && this._state.comment && this._state.emoji) {
+      evt.preventDefault();
+      const newComment =  {
+        id: this.#comments.length,
+        author: 'User',
+        comment: this._state.comment,
+        date: dayjs().toISOString(),
+        emotion: this._state.emoji,
+      };
+      this._state.comments.push(this.#comments.length);
+      this._callback.onAddCommentClick(FilmDetailsView.parseStateToFilm(this._state), newComment);
+    }
+  };
+
+  #onDeletingCommentClick = (evt) => {
+    evt.preventDefault();
+    if (evt.target.classList.contains('film-details__comment-delete')) {
+      this._callback.onDeletingCommentClick(evt.target.dataset.id);
+    }
+  };
+
+  #onCloseButtonClick = (evt) => {
+    evt.preventDefault();
+    this._callback.onCloseButtonClick();
+  };
+
+  #onWatchlistClick = (evt) => {
+    evt.preventDefault();
+    this._callback.onWatchlistClick(FilmDetailsView.parseStateToFilm(this._state));
+  };
+
+  #onWatchedClick = (evt) => {
+    evt.preventDefault();
+    this._callback.onWatchedClick(FilmDetailsView.parseStateToFilm(this._state));
+  };
+
+  #onFavoriteClick = (evt) => {
+    evt.preventDefault();
+    this._callback.onFavoriteClick(FilmDetailsView.parseStateToFilm(this._state));
+  };
+
+  #onCommentChange = (evt) => {
+    evt.preventDefault();
+
+    this._setState({
+      comment: he.encode(evt.target.value),
+    });
+  };
+
   static parseFilmToState = (film) => ({...film,
     emoji: null,
     comment: null,
   });
 
   static parseStateToFilm = (state) => {
-    const localComment = {
-      localComment : {
-        emoji: state.emoji,
-        comment: state.comment,
-      }
-    };
-    const film = {...state, ...{localComment}};
+    const film = {...state};
 
     delete film.emoji;
     delete film.comment;
