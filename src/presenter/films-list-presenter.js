@@ -36,6 +36,7 @@ export default class FilmsListPresenter {
   #filmListEmpty = null;
   #topRated = null;
   #mostComment = null;
+  #scrollPosition = null;
 
   #currentFilter = FILTERS_TYPE.ALL;
   #currentSort = SORT_TYPE.DEFAULT;
@@ -87,21 +88,6 @@ export default class FilmsListPresenter {
     } else {
       this.#filmPresenters.set(filmId, [filmPresenter]);
     }
-  };
-
-  #closePopup = () => {
-    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
-      this.#filmDetailsPresenter.closePopup();
-      this.#filmDetailsPresenter = null;
-    }
-  };
-
-  #openPopup = (film) => {
-    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
-      this.#closePopup();
-    }
-    this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
-    this.#filmDetailsPresenter.init(film, this.comments);
   };
 
   #renderUserRate = () => {
@@ -206,6 +192,24 @@ export default class FilmsListPresenter {
     if (resetSortType) {
       this.#currentSort = SORT_TYPE.DEFAULT;
     }
+  };
+
+  #closePopup = () => {
+    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+      this.#filmDetailsPresenter.closePopup();
+      this.#filmDetailsPresenter = null;
+    }
+  };
+
+  #openPopup = (film) => {
+    let scrollPosition = null;
+    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+      scrollPosition = this.#filmDetailsPresenter.getScrollPosition();
+      this.#closePopup();
+    }
+    this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
+    this.#filmDetailsPresenter.init(film, this.comments);
+    this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
   };
 
   #onViewAction = (actionType, updateType, update) => {

@@ -1,6 +1,5 @@
 import {render, remove, replace} from '../framework/render';
 import FilmDetailsView from '../view/film-details-view';
-import {setScrollPosition, getScrollPosition} from '../utils/film';
 import {UserAction, UpdateType} from '../const.js';
 
 export default class FilmDetailsPresenter {
@@ -25,6 +24,10 @@ export default class FilmDetailsPresenter {
     return this.#isOpened;
   }
 
+  getScrollPosition = () => this.#filmDetailsView.element.scrollTop;
+
+  setScrollPosition = (scrollPosition) => (this.#filmDetailsView.element.scrollTop = scrollPosition);
+
   closePopup = () => {
     if(this.#filmDetailsView) {
       document.body.classList.remove('hide-overflow');
@@ -37,7 +40,6 @@ export default class FilmDetailsPresenter {
   };
 
   #renderDetails = () => {
-    const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
     const prevFilmDetailsView = this.#filmDetailsView;
     this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
 
@@ -47,8 +49,6 @@ export default class FilmDetailsPresenter {
       replace(this.#filmDetailsView, prevFilmDetailsView);
     }
 
-    this.#scrollDetails(scrollPosition);
-
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
 
@@ -57,12 +57,6 @@ export default class FilmDetailsPresenter {
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
     this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);
     this.#isOpened = true;
-  };
-
-  #scrollDetails = (scrollPosition) => {
-    if(scrollPosition) {
-      setScrollPosition(this.#filmDetailsView.element, scrollPosition);
-    }
   };
 
   #onCloseClick = () => {
@@ -79,24 +73,18 @@ export default class FilmDetailsPresenter {
   #onWatchListClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    const scrollPosition = this.#filmDetailsView ? getScrollPosition(this.#filmDetailsView.element) : null;
     this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
-    this.#scrollDetails(scrollPosition);
   };
 
   #onWatchedClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    const scrollPosition = this.filmDetailsView ? getScrollPosition(this.filmDetailsView.element) : null;
     this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
-    this.#scrollDetails(scrollPosition);
   };
 
   #onFavoriteClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    const scrollPosition = this.filmDetailsView ? getScrollPosition(this.filmDetailsView.element) : null;
     this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
-    this.#scrollDetails(scrollPosition);
   };
 }
