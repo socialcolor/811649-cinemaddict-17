@@ -217,7 +217,7 @@ export default class FilmsListPresenter {
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmsModel.updateFilm(updateType, update);
+        this.#commentsModel.deleteComment(updateType, update);
         break;
     }
   };
@@ -245,6 +245,8 @@ export default class FilmsListPresenter {
       case UpdateType.MAJOR:
         this.#clearFilmsBoard({resetRenderetFilmCount: true, resetSortType: true});
         this.#renderFilmsBoard();
+        break;
+      case updateType.NO_UPDATE:
         break;
     }
   };

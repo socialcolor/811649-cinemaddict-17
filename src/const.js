@@ -1,33 +1,33 @@
 const FILM_COUNT_PER_STEP = 5;
 const FILM_LENGTH = 30;
-const COMMENTS_LENGTH = 10;
+const COMMENTS_LENGTH = 10000;
 const TOP_RATED_FILMS = 2;
 const MOST_COMMENTS_FILMS = 2;
 
 const RATES = {
   NOVICE: 'Novice',
   FAN: 'Fan',
-  MOVIE_BUFF: 'Movie Buff'
+  MOVIE_BUFF: 'Movie Buff',
 };
 
 const FILTERS_TYPE = {
   ALL: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
-  FAVORITES: 'favorites'
+  FAVORITES: 'favorites',
 };
 
 const EMPTY_TEXT = {
   ALL: 'There are no movies in our database',
   WATCHLIST: 'There are no watchlist movies now',
   HISTORY: 'There are no history movies now',
-  FAVORITES: 'There are no favorite movies now'
+  FAVORITES: 'There are no favorite movies now',
 };
 
 const SORT_TYPE = {
   DEFAULT: 'default',
   DATE: 'date',
-  RATING: 'rating'
+  RATING: 'rating',
 };
 
 const DIRTCTORS = [
@@ -83,7 +83,7 @@ const EMOTIONS = [
   'smile',
   'sleeping',
   'puke',
-  'angry'
+  'angry',
 ];
 
 const UserAction = {
@@ -100,6 +100,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  NO_UPDATE: 'NO_UPDATE',
 };
 
 export {
@@ -120,5 +121,5 @@ export {
   SORT_TYPE,
   EMPTY_TEXT,
   UserAction,
-  UpdateType
+  UpdateType,
 };

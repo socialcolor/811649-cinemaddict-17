@@ -28,6 +28,13 @@ export default class FilmDetailsPresenter {
 
   setScrollPosition = (scrollPosition) => (this.#filmDetailsView.element.scrollTop = scrollPosition);
 
+  #deletingCommentInPopup = (id) => {
+    const index = this.#film.comments.findIndex((commentIndex) => Number(commentIndex) === Number(id));
+    const film = {...this.#film, comments: [...this.#film.comments]};
+    film.comments.splice(index, 1);
+    return film;
+  };
+
   closePopup = () => {
     if(this.#filmDetailsView) {
       document.body.classList.remove('hide-overflow');
@@ -72,27 +79,22 @@ export default class FilmDetailsPresenter {
   };
 
   #onDeletClick = (id) => {
-    const film = {...this.#film, comments: [...this.#film.comments]};
-    const index = this.#film.comments.findIndex((commentIndex) => Number(commentIndex) === Number(id));
-    film.comments.splice(index, 1);
-    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.MINOR, film);
+    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.NO_UPDATE, id);
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, this.#deletingCommentInPopup(id));
   };
 
   #onWatchListClick = () => {
-    const userDetails = this.#film.userDetails;
-    const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
+    const change = {...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}};
     this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 
   #onWatchedClick = () => {
-    const userDetails = this.#film.userDetails;
-    const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
+    const change = {...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}};
     this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 
   #onFavoriteClick = () => {
-    const userDetails = this.#film.userDetails;
-    const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
+    const change = {...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}};
     this.#changeData(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
   };
 }

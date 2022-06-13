@@ -39,7 +39,7 @@ const generateDescription = () => {
 const addCommentsInFilm = () => {
   const comments = [];
 
-  for(let i = 0; i < getRandomInteger(0, COMMENTS_LENGTH - 1); i++) {
+  for(let i = 0; i < getRandomInteger(0, 3 - 1); i++) {
     comments.push(getRandomInteger(0, COMMENTS_LENGTH -1));
   }
   return comments;
