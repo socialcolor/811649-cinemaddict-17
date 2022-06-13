@@ -36,7 +36,6 @@ export default class FilmsListPresenter {
   #filmListEmpty = null;
   #topRated = null;
   #mostComment = null;
-  #scrollPosition = null;
 
   #currentFilter = FILTERS_TYPE.ALL;
   #currentSort = SORT_TYPE.DEFAULT;
@@ -217,6 +216,9 @@ export default class FilmsListPresenter {
       case UserAction.UPDATE_FILM:
         this.#filmsModel.updateFilm(updateType, update);
         break;
+      case UserAction.DELETE_COMMENT:
+        this.#filmsModel.updateFilm(updateType, update);
+        break;
     }
   };
 
@@ -236,6 +238,9 @@ export default class FilmsListPresenter {
       case UpdateType.MINOR:
         this.#clearFilmsBoard();
         this.#renderFilmsBoard();
+        if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+          this.#openPopup(data);
+        }
         break;
       case UpdateType.MAJOR:
         this.#clearFilmsBoard({resetRenderetFilmCount: true, resetSortType: true});

@@ -53,6 +53,7 @@ export default class FilmDetailsPresenter {
     document.addEventListener('keydown', this.#onEscKeyDown);
 
     this.#filmDetailsView.setCloseButtonHandler(this.#onCloseClick);
+    this.#filmDetailsView.setDeleteCommentHandler(this.#onDeletClick);
     this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
     this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);
@@ -68,6 +69,13 @@ export default class FilmDetailsPresenter {
       evt.preventDefault();
       this.closePopup();
     }
+  };
+
+  #onDeletClick = (id) => {
+    const film = {...this.#film, comments: [...this.#film.comments]};
+    const index = this.#film.comments.findIndex((commentIndex) => Number(commentIndex) === Number(id));
+    film.comments.splice(index, 1);
+    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.MINOR, film);
   };
 
   #onWatchListClick = () => {

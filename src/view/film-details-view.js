@@ -20,7 +20,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
        <p class="film-details__comment-info">
          <span class="film-details__comment-author">${data.author}</span>
          <span class="film-details__comment-day">${formatDate(data.date, 'YYYY/MM/DD HH:mm')}</span>
-         <button class="film-details__comment-delete">Delete</button>
+         <button class="film-details__comment-delete" data-id="${data.id}">Delete</button>
        </p>
      </div>
    </li>`);
@@ -178,6 +178,11 @@ export default class FilmDetailsView extends AbstractStatefulView {
     );
   };
 
+  setDeleteCommentHandler (callback) {
+    this._callback.onDeletingCommentClick = callback;
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#onDeletingCommentClick);
+  }
+
   setCloseButtonHandler (callback) {
     this._callback.onCloseButtonClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#onCloseButtonClick);
@@ -220,6 +225,13 @@ export default class FilmDetailsView extends AbstractStatefulView {
       });
 
       setScrollPosition(this.element, scrollPosition);
+    }
+  };
+
+  #onDeletingCommentClick = (evt) => {
+    evt.preventDefault();
+    if (evt.target.classList.contains('film-details__comment-delete')) {
+      this._callback.onDeletingCommentClick(evt.target.dataset.id);
     }
   };
 
