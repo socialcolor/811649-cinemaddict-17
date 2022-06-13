@@ -59,8 +59,9 @@ export default class FilmDetailsPresenter {
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
 
-    this.#filmDetailsView.setCloseButtonHandler(this.#onCloseClick);
     this.#filmDetailsView.setDeleteCommentHandler(this.#onDeletClick);
+    this.#filmDetailsView.setAddCommentHandler(this.#onAddCommentClick);
+    this.#filmDetailsView.setCloseButtonHandler(this.#onCloseClick);
     this.#filmDetailsView.setWatchlistHandler(this.#onWatchListClick);
     this.#filmDetailsView.setWatchedHandler(this.#onWatchedClick);
     this.#filmDetailsView.setFavoriteHandler(this.#onFavoriteClick);
@@ -76,6 +77,11 @@ export default class FilmDetailsPresenter {
       evt.preventDefault();
       this.closePopup();
     }
+  };
+
+  #onAddCommentClick = (film, comment) => {
+    this.#changeData(UserAction.ADD_COMMENT, UpdateType.NO_UPDATE, comment);
+    this.#changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
   };
 
   #onDeletClick = (id) => {
