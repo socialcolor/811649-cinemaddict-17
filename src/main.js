@@ -3,16 +3,22 @@ import FilterPresenter from './presenter/filter-presenter';
 import FilmsModel from './model/films-model';
 import CommentsModel from './model/comments-model';
 import FilterModel from './model/filter-model';
+import FilmsApiService from './film-api-service';
+
+const AUTHORIZATION = 'Basic testFilmAut1';
+const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
 const header = document.querySelector('.header');
 const mainContainer = document.querySelector('.main');
 const footer = document.querySelector('.footer');
+const filmApiService = new FilmsApiService(END_POINT, AUTHORIZATION);
 
-const filmsModel = new FilmsModel();
-const commentsModel = new CommentsModel();
+const filmsModel = new FilmsModel(filmApiService);
+const commentsModel = new CommentsModel(filmApiService);
 const filterModel = new FilterModel();
 const filmListPresenter = new FilmsListPresenter(mainContainer, header, footer, filmsModel, commentsModel, filterModel);
 const filterPresenter = new FilterPresenter(mainContainer, filmsModel, filterModel);
 
-filmListPresenter.init();
 filterPresenter.init();
+filmListPresenter.init();
+filmsModel.init();

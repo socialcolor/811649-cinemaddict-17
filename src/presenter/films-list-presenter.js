@@ -1,6 +1,7 @@
 import {render, remove} from '../framework/render';
 import FilmPresenter from './film-presenter';
 import FilmDetailsPresenter from './film-details-presenter';
+import FilmLoadingView from '../view/film-loading-view';
 import FilmSortView from '../view/film-sort-view';
 import RateView from '../view/rate-view';
 import FilmSectionView from '../view/film-section-view';
@@ -30,12 +31,15 @@ export default class FilmsListPresenter {
   #sortView = null;
   #filmSection = new FilmSectionView();
   #filmList = new FilmListView();
+  #filmLoading = new FilmLoadingView();
   #filmListContainer = new FilmListContainerView();
   #showMoreButton = new ShowMoreButtonView();
   #filmTitle = null;
   #filmListEmpty = null;
   #topRated = null;
   #mostComment = null;
+  #filmCountFooter = null;
+  #isLoading = true;
 
   #currentFilter = FILTERS_TYPE.ALL;
   #currentSort = SORT_TYPE.DEFAULT;
@@ -50,13 +54,13 @@ export default class FilmsListPresenter {
     this.#filterModel = filterModel;
 
     this.#filmsModel.addObserver(this.#onModelEvent);
-    this.#commentsModel.addObserver(this.#onModelEvent);
     this.#filterModel.addObserver(this.#onModelEvent);
+    this.#commentsModel.addObserver(this.#onModelEvent);
   }
 
   get films() {
+    const films = this.#filmsModel.films;
     const filterType = this.#filterModel.filter;
-    const films = [...this.#filmsModel.films];
     const filtredFilms = filter[filterType](films);
 
     switch (this.#currentSort) {
@@ -71,12 +75,7 @@ export default class FilmsListPresenter {
 
   }
 
-  get comments() {
-    return [...this.#commentsModel.comments];
-  }
-
   init = () => {
-    render(new FooterStatView(this.#filmsModel.films.length), this.#footer);
     this.#renderFilmsBoard();
   };
 
@@ -87,6 +86,10 @@ export default class FilmsListPresenter {
     } else {
       this.#filmPresenters.set(filmId, [filmPresenter]);
     }
+  };
+
+  #renderLoading = () => {
+    render(this.#filmLoading, this.#mainSection);
   };
 
   #renderUserRate = () => {
@@ -115,10 +118,8 @@ export default class FilmsListPresenter {
   };
 
   #renderShowMoreButton = () => {
-    if(this.films.length > FILM_COUNT_PER_STEP && this.#renderedFilmCount < this.films.length) {
-      this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
-      render(this.#showMoreButton, this.#filmList.element);
-    }
+    this.#showMoreButton.setShowMoreButtonHandler(this.#onShowMoreButtonClick);
+    render(this.#showMoreButton, this.#filmList.element);
   };
 
   #renderExtraBlock = () => {
@@ -153,6 +154,11 @@ export default class FilmsListPresenter {
   };
 
   #renderFilmsBoard = () => {
+    if(this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const films = this.films;
     const filmCount = films.length;
 
@@ -163,13 +169,14 @@ export default class FilmsListPresenter {
     render(this.#filmListContainer, this.#filmList.element);
     this.#filmTitle = new FilmListTitleView(this.#currentFilter);
     render(this.#filmTitle, this.#filmList.element);
-
     if (filmCount === 0) {
       remove(this.#sortView);
       this.#rednerFilmListEmpty();
     } else {
       this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
-      this.#renderShowMoreButton();
+      if(filmCount > FILM_COUNT_PER_STEP && this.#renderedFilmCount < filmCount.length) {
+        this.#renderShowMoreButton();
+      }
     }
 
     this.#renderExtraBlock();
@@ -200,14 +207,14 @@ export default class FilmsListPresenter {
     }
   };
 
-  #openPopup = (film) => {
+  #openPopup = async (film) => {
     let scrollPosition = null;
     if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
       scrollPosition = this.#filmDetailsPresenter.getScrollPosition();
       this.#closePopup();
     }
     this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
-    this.#filmDetailsPresenter.init(film, this.comments);
+    this.#filmDetailsPresenter.init(film, await this.#commentsModel.getСomments(film.id));
     this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
   };
 
@@ -250,6 +257,12 @@ export default class FilmsListPresenter {
         this.#renderFilmsBoard();
         break;
       case updateType.NO_UPDATE:
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#filmLoading);
+        this.#renderFilmsBoard();
+        render(new FooterStatView(this.films.length), this.#footer);
         break;
     }
   };

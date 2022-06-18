@@ -46,7 +46,7 @@ export default class FilmPresenter {
   #onWatchListClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, watchlist: !userDetails.watchlist}};
-    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
+    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.MINOR, change);
   };
 
   #onWatchedClick = () => {

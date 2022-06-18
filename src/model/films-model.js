@@ -1,26 +1,77 @@
 import Observable from '../framework/observable.js';
-import {generateFilms} from '../mock/film';
+import { UpdateType } from '../const.js';
 
 export default class FilmModel extends Observable {
-  #films = generateFilms();
+  #filmsApiServices = null;
+  #films = [];
+
+  constructor(filmsApiServices) {
+    super();
+    this.#filmsApiServices = filmsApiServices;
+  }
 
   get films() {
     return this.#films;
   }
 
-  updateFilm = (updateType, update) => {
+  init = async () => {
+    try {
+      const films = await this.#filmsApiServices.films;
+      this.#films = films.map(this.#adaptToClient);
+    } catch {
+      this.#films = [];
+    }
+    this._notify(UpdateType.INIT);
+  };
+
+  updateFilm = async (updateType, update) => {
     const index = this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting task');
     }
 
-    this.#films = [
-      ...this.#films.slice(0, index),
-      update,
-      ...this.#films.slice(index + 1),
-    ];
+    // this.#filmsApiServices.updateFilm(update);
+    try {
+      const response = await this.#filmsApiServices.updateFilm(update);
+      const updateFilm = this.#adaptToClient(response);
 
-    this._notify(updateType, update);
+      this.#films = [
+        ...this.#films.slice(0, index),
+        update,
+        ...this.#films.slice(index + 1),
+      ];
+
+      this._notify(updateType, updateFilm);
+    } catch(err) {
+      throw new Error(`Can't update film. ${err}`);
+    }
+  };
+
+  #adaptToClient = (film) => {
+    const adaptedFilm = {...film,
+      filmInfo: {...film.film_info,
+        alternativeTitle: film.film_info.alternative_title,
+        ageRating: film.film_info.age_rating,
+        rate: film.film_info.total_rating,
+        release: {...film.film_info.release,
+          releaseCountry: film.film_info.release.release_country
+        },
+      },
+      userDetails: {...film.user_details,
+        alreadyWatched: film.user_details.already_watched,
+        watchingDate: film.user_details.watching_date,
+      }
+    };
+    delete adaptedFilm.film_info;
+    delete adaptedFilm.filmInfo.alternative_title;
+    delete adaptedFilm.filmInfo.age_rating;
+    delete adaptedFilm.filmInfo.total_rating;
+    delete adaptedFilm.filmInfo.release.release_country;
+    delete adaptedFilm.user_details;
+    delete adaptedFilm.userDetails.already_watched;
+    delete adaptedFilm.userDetails.watching_date;
+
+    return adaptedFilm;
   };
 }
