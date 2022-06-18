@@ -174,7 +174,7 @@ export default class FilmsListPresenter {
       this.#rednerFilmListEmpty();
     } else {
       this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
-      if(filmCount > FILM_COUNT_PER_STEP && this.#renderedFilmCount < filmCount.length) {
+      if(filmCount > FILM_COUNT_PER_STEP && this.#renderedFilmCount < filmCount) {
         this.#renderShowMoreButton();
       }
     }
