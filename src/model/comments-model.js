@@ -1,12 +1,15 @@
 import Observable from '../framework/observable.js';
-import {generateComments} from '../mock/film';
 
 export default class CommentModel extends Observable {
-  #comments = generateComments();
+  #filmApiServices = null;
+  #comments = [];
 
-  get comments() {
-    return this.#comments;
+  constructor(filmApiServices) {
+    super();
+    this.#filmApiServices = filmApiServices;
   }
+
+  getСomments = (id) => this.#filmApiServices.getComments(id);
 
   addComment = (updateType, update) => {
     this.#comments.push(update);

@@ -16,7 +16,7 @@ const createFilmItemTemplate = (film) => {
          <span class="film-card__duration">${formatTime(filmInfo.runtime)}</span>
          <span class="film-card__genre">${filmInfo.genre[0]}</span>
        </p>
-       <img src="./images/posters/${filmInfo.poster}" alt="" class="film-card__poster">
+       <img src="${filmInfo.poster}" alt="" class="film-card__poster">
        <p class="film-card__description">${description}</p>
        <span class="film-card__comments">${comments.length} comments</span>
      </a>

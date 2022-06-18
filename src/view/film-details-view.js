@@ -26,6 +26,11 @@ const createFilmDetailsTemplate = (film, filmComments) => {
      </div>
    </li>`);
 
+  const createLoadingErrorTemplate = () => (
+    `<li cclass="film-details__comment">
+    <p class="film-details__comment-text" style="color:red;">Comments loading error. Try again later</p>
+    </li>`);
+
   const createAddEmojiTemplate = (url) => `<img src="./images/emoji/${url}.png" width="55" height="55" alt="emoji-smile"></img>`;
 
   const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden"
@@ -36,10 +41,13 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 
   const comentsTemplate = () => {
     let commentsList = '';
-    for(const commentId of comments) {
-      commentsList += createCommentTemplate(filmComments.find((it) => it.id === commentId));
+    if(filmComments.length) {
+      for(const commentId of comments) {
+        commentsList += createCommentTemplate(filmComments.find((it) => it.id === commentId));
+      }
+      return commentsList;
     }
-    return commentsList;
+    return createLoadingErrorTemplate();
   };
 
   const createGenresList = filmInfo.genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('');
@@ -58,7 +66,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${filmInfo.poster}" alt="">
+            <img class="film-details__poster-img" src="${filmInfo.poster}" alt="">
 
             <p class="film-details__age">${filmInfo.ageRating}+</p>
           </div>
@@ -150,7 +158,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     super();
 
     this.#comments = comments;
-
     this._state = FilmDetailsView.parseFilmToState(film);
 
     this.#setInnerHandler();
