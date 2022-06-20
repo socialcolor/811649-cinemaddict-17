@@ -1,4 +1,5 @@
 import {render, remove} from '../framework/render';
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import FilmPresenter from './film-presenter';
 import FilmDetailsPresenter from './film-details-presenter';
 import FilmLoadingView from '../view/film-loading-view';
@@ -16,12 +17,16 @@ import {FILM_COUNT_PER_STEP, TOP_RATED_FILMS, MOST_COMMENTS_FILMS, SORT_TYPE, FI
 import dayjs from 'dayjs';
 import { filter } from '../utils/filter';
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export default class FilmsListPresenter {
   #mainSection = null;
   #header = null;
   #footer = null;
   #filmsModel = null;
-  // #commentsModel = null;
   #filterModel = null;
 
   #filmDetailsPresenter = null;
@@ -38,24 +43,22 @@ export default class FilmsListPresenter {
   #filmListEmpty = null;
   #topRated = null;
   #mostComment = null;
-  #filmCountFooter = null;
   #isLoading = true;
 
   #currentFilter = FILTERS_TYPE.ALL;
   #currentSort = SORT_TYPE.DEFAULT;
   #renderedFilmCount = FILM_COUNT_PER_STEP;
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   constructor (container, header, footer, filmsModel, filterModel) {
     this.#mainSection = container;
     this.#header = header;
     this.#footer = footer;
     this.#filmsModel = filmsModel;
-    // this.#commentsModel = commentsModel;
     this.#filterModel = filterModel;
 
     this.#filmsModel.addObserver(this.#onModelEvent);
     this.#filterModel.addObserver(this.#onModelEvent);
-    // this.#commentsModel.addObserver(this.#onModelEvent);
   }
 
   get films() {
@@ -129,7 +132,7 @@ export default class FilmsListPresenter {
     if(topRateFimls.length) {
       this.#topRated = new FilmMostView('Top rated');
       render(this.#topRated, this.#filmSection.element);
-      for(let i = 0; i < TOP_RATED_FILMS; i++) {
+      for(let i = 0; i < Math.min(TOP_RATED_FILMS, topRateFimls.length); i++) {
         this.#renderFilm(topRateFimls[i], this.#topRated.element.querySelector('.films-list__container'));
       }
     }
@@ -137,7 +140,7 @@ export default class FilmsListPresenter {
     if(mostCommentsFilms.length) {
       this.#mostComment = new FilmMostView('Most commented');
       render(this.#mostComment, this.#filmSection.element);
-      for(let i = 0; i < MOST_COMMENTS_FILMS; i++) {
+      for(let i = 0; i < Math.min(MOST_COMMENTS_FILMS, mostCommentsFilms.length); i++) {
         this.#renderFilm(mostCommentsFilms[i], this.#mostComment.element.querySelector('.films-list__container'));
       }
     }
@@ -218,19 +221,39 @@ export default class FilmsListPresenter {
     this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
   };
 
-  #onViewAction = (actionType, updateType, update) => {
+  #onViewAction = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+    const scrollPosition = this.#filmDetailsPresenter.isOpened ? this.#filmDetailsPresenter.getScrollPosition() : null;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
-        this.#filmsModel.updateFilm(updateType, update);
+        try {
+          await this.#filmsModel.updateFilm(updateType, update);
+        } catch {
+          if(this.#filmDetailsPresenter.isOpened) {
+            this.#filmDetailsPresenter.setAborting(scrollPosition);
+          }
+          this.#filmPresenters.get(update.id).forEach((presenter) => presenter.setAborting());
+        }
         break;
       case UserAction.DELETE_COMMENT:
-        // console.log(update);
-        this.#filmsModel.deleteComment(updateType, update);
+        this.#filmDetailsPresenter.setDeleting(update.commentId);
+        try{
+          await this.#filmsModel.deleteComment(updateType, update);
+        } catch {
+          this.#filmDetailsPresenter.setAborting(scrollPosition);
+        }
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmsModel.addComment(updateType, update);
+        this.#filmDetailsPresenter.setSaving(scrollPosition);
+        try{
+          await this.#filmsModel.addComment(updateType, update);
+        } catch {
+          this.#filmDetailsPresenter.setAborting(scrollPosition);
+        }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #onModelEvent = (updateType, data) => {

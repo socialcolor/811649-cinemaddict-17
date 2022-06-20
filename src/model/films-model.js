@@ -69,22 +69,15 @@ export default class FilmModel extends Observable {
 
   deleteComment = async (updateType, update) => {
     const filmId = Number(update.id);
+    const index =  this.#films.findIndex((film) => Number(film.id) === filmId);
 
     try {
       await this.#filmsApiServices.deleteComment(update);
+      this.#films[index].comments = this.#films[index].comments.filter((comment) => Number(comment) !== Number(update.commentId));
+      this._notify(updateType, this.#films[index]);
     } catch(err) {
       throw new Error(`Cant't delete comment. Error >>> ${err}`);
     }
-
-    try {
-      const films = await this.#filmsApiServices.films;
-      this.#films = films.map(this.#adaptToClient);
-    } catch {
-      this.#films = [];
-    }
-
-    const index =  this.#films.findIndex((film) => Number(film.id) === filmId);
-    this._notify(updateType, this.#films[index]);
   };
 
   #adaptToClient = (film) => {

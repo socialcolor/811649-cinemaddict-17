@@ -2,10 +2,13 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {formatDate, formatTime} from '../utils/utils';
 import {setScrollPosition, getScrollPosition} from '../utils/film';
 import { EMOTIONS } from '../const';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import he from 'he';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
-  const {filmInfo, comments, userDetails, emoji, comment} = film;
+  dayjs.extend(relativeTime);
+  const {filmInfo, comments, userDetails, emoji, comment, isDisabled, isDeleting} = film;
   const watchlist = userDetails.watchlist ? 'film-details__control-button--active' : '';
   const alreadyWatched = userDetails.alreadyWatched  ? 'film-details__control-button--active' : '';
   const favorite = userDetails.favorite ? 'film-details__control-button--active' : '';
@@ -19,16 +22,16 @@ const createFilmDetailsTemplate = (film, filmComments) => {
        <p class="film-details__comment-text">${data.comment}</p>
        <p class="film-details__comment-info">
          <span class="film-details__comment-author">${data.author}</span>
-         <span class="film-details__comment-day">${formatDate(data.date, 'YYYY/MM/DD HH:mm')}</span>
-         <button class="film-details__comment-delete" data-id="${data.id}">Delete</button>
+         <span class="film-details__comment-day">${dayjs(data.date).fromNow()}</span>
+         <button class="film-details__comment-delete" data-id="${data.id}">${isDeleting && data.id === film.deletingComment ? 'Deleting' : 'Delete'}</button>
        </p>
      </div>
    </li>`);
 
   const createAddEmojiTemplate = (url) => `<img src="./images/emoji/${url}.png" width="55" height="55" alt="emoji-smile"></img>`;
 
-  const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden"
-   name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"} ${currentEmoji === emotion ? 'checked': ''}>
+  const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio"
+   id="emoji-${emotion}" value="${emotion}" ${currentEmoji === emotion ? 'checked': ''} ${isDisabled ? 'disabled' : ''}>
      <label class="film-details__emoji-label" for="emoji-${emotion}">
        <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
      </label>`).join('');
@@ -52,7 +55,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
   const genreTitleTemplate = filmInfo.genre.length > 1 ? 'Genres' : 'Genre';
 
   return  `<section class="film-details">
-    <form class="film-details__inner" action="" method="get">
+    <form class="film-details__inner" action="" method="get" ${isDisabled ? 'disabled' : ''}>
       <div class="film-details__top-container">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
@@ -115,9 +118,9 @@ const createFilmDetailsTemplate = (film, filmComments) => {
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist}" data-name="watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched}" data-name="alreadyWatched" id="watched" name="watched">Already watched</button>
-          <button type="button" class="film-details__control-button film-details__control-button--favorite ${favorite}" data-name="favorite" id="favorite" name="favorite">Add to favorites</button>
+          <button ${isDisabled ? 'disabled' : ''} type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist}" data-name="watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+          <button ${isDisabled ? 'disabled' : ''} type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched}" data-name="alreadyWatched" id="watched" name="watched">Already watched</button>
+          <button ${isDisabled ? 'disabled' : ''} type="button" class="film-details__control-button film-details__control-button--favorite ${favorite}" data-name="favorite" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
 
@@ -133,7 +136,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
             <div class="film-details__add-emoji-label">${addEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>${commentText}</textarea>
             </label>
 
             <div class="film-details__emoji-list">${emojiTemplate}</div>
@@ -167,12 +170,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.setWatchlistHandler(this._callback.onWatchlistClick);
     this.setWatchedHandler(this._callback.onWatchlistClick);
     this.setFavoriteHandler(this._callback.onFavoriteClick);
-  };
-
-  reset = (film) => {
-    this.updateElement(
-      FilmDetailsView.parseFilmToState(film),
-    );
   };
 
   setAddCommentHandler (callback) {
@@ -268,6 +265,8 @@ export default class FilmDetailsView extends AbstractStatefulView {
     id: film.id,
     emoji: null,
     comment: null,
+    isDisabled: false,
+    isDeleting: false,
   });
 
   static parseStateToFilm = (state) => {
@@ -281,7 +280,9 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
     delete localComment.comment;
     delete localComment.emoji;
-
+    delete localComment.isDisabled;
+    delete localComment.isDeleting;
+    delete localComment.commentId;
     return localComment;
   };
 }

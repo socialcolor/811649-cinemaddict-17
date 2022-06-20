@@ -9,6 +9,7 @@ export default class FilmDetailsPresenter {
   #isOpened = false;
 
   #filmDetailsView = null;
+  #scrollPosition = 0;
 
   constructor (controlsChange) {
     this.#changeData = controlsChange;
@@ -24,16 +25,37 @@ export default class FilmDetailsPresenter {
     return this.#isOpened;
   }
 
+  setDeleting = (id) => {
+    this.#filmDetailsView.updateElement({
+      isDisabled: true,
+      isDeleting: true,
+      deletingComment: id,
+    });
+  };
+
+  setSaving = (scrollPosition) => {
+    this.#filmDetailsView.updateElement({
+      isDisabled: true,
+      isDeleting: true,
+    });
+    this.setScrollPosition(scrollPosition);
+  };
+
+  setAborting = (scrollPosition) => {
+    const resetFormState = () => {
+      this.#filmDetailsView.updateElement({
+        isDisabled: false,
+        isDeleting: false,
+      });
+      this.setScrollPosition(scrollPosition);
+    };
+    this.setScrollPosition(scrollPosition);
+    this.#filmDetailsView.shake(resetFormState);
+  };
+
   getScrollPosition = () => this.#filmDetailsView.element.scrollTop;
 
-  setScrollPosition = (scrollPosition) => (this.#filmDetailsView.element.scrollTop = scrollPosition);
-
-  #deletingCommentInPopup = (id) => {
-    const index = this.#film.comments.findIndex((commentIndex) => Number(commentIndex) === Number(id));
-    const film = {...this.#film, comments: [...this.#film.comments]};
-    film.comments.splice(index, 1);
-    return film;
-  };
+  setScrollPosition = (scrollPosition) => (this.#filmDetailsView.element.scrollTop = scrollPosition ? scrollPosition : this.#scrollPosition);
 
   closePopup = () => {
     if(this.#filmDetailsView) {
@@ -44,6 +66,13 @@ export default class FilmDetailsPresenter {
       this.#filmDetailsView = null;
     }
     this.#isOpened = false;
+  };
+
+  recoveryComment = () => {
+    this.#filmDetailsView.updateElement({
+      emotion: this.#film.emoji,
+      comment: this.#film.comment,
+    });
   };
 
   #renderDetails = () => {
@@ -80,11 +109,11 @@ export default class FilmDetailsPresenter {
   };
 
   #onAddCommentClick = (film) => {
-    this.#changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
+    this.#changeData(UserAction.ADD_COMMENT, UpdateType.MINOR, film);
   };
 
   #onDeletClick = (film, commentId) => {
-    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {...film, commentId: commentId});
+    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.MINOR, {...film, commentId: commentId});
   };
 
   #onWatchListClick = () => {
