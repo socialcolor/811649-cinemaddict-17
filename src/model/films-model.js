@@ -55,7 +55,7 @@ export default class FilmModel extends Observable {
 
   addComment = async (updateType, update) => {
     try {
-      const response = await this.#filmsApiServices.addComment(update);
+      const response = await this.#filmsApiServices.addComment(update.id, update.localComment);
 
       const film = this.#adaptToClient(response.movie);
 
@@ -72,7 +72,7 @@ export default class FilmModel extends Observable {
     const index =  this.#films.findIndex((film) => Number(film.id) === filmId);
 
     try {
-      await this.#filmsApiServices.deleteComment(update);
+      await this.#filmsApiServices.deleteComment(update.commentId);
       this.#films[index].comments = this.#films[index].comments.filter((comment) => Number(comment) !== Number(update.commentId));
       this._notify(updateType, this.#films[index]);
     } catch(err) {

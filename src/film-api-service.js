@@ -29,11 +29,11 @@ export default class FilmApiService extends ApiService {
     return parsedResponse;
   };
 
-  addComment = async (film) => {
+  addComment = async (film, localComment) => {
     const response = await this._load({
-      url: `comments/${film.id}`,
+      url: `comments/${film}`,
       method: Method.POST,
-      body: JSON.stringify(film.localComment),
+      body: JSON.stringify(localComment),
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
@@ -44,7 +44,7 @@ export default class FilmApiService extends ApiService {
 
   deleteComment = async (comment) => {
     const response = await this._load({
-      url: `comments/${comment.commentId}`,
+      url: `comments/${comment}`,
       method: Method.DELETE,
     });
 
