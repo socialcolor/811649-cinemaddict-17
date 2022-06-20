@@ -1,17 +1,17 @@
-import { FILTERS_TYPE } from '../const';
+import { FiltersType } from '../const';
 
 const getCountFilmsInFilters = (filters) => ({
-  [FILTERS_TYPE.ALL]: filters.find((it) => it.type === FILTERS_TYPE.ALL).count,
-  [FILTERS_TYPE.WATCHLIST]: filters.find((it) => it.type === FILTERS_TYPE.WATCHLIST).count,
-  [FILTERS_TYPE.HISTORY]: filters.find((it) => it.type === FILTERS_TYPE.HISTORY).count,
-  [FILTERS_TYPE.FAVORITES]: filters.find((it) => it.type === FILTERS_TYPE.FAVORITES).count,
+  [FiltersType.ALL]: filters.find((it) => it.type === FiltersType.ALL).count,
+  [FiltersType.WATCHLIST]: filters.find((it) => it.type === FiltersType.WATCHLIST).count,
+  [FiltersType.HISTORY]: filters.find((it) => it.type === FiltersType.HISTORY).count,
+  [FiltersType.FAVORITES]: filters.find((it) => it.type === FiltersType.FAVORITES).count,
 });
 
 const filter = {
-  [FILTERS_TYPE.ALL]: (films) => films,
-  [FILTERS_TYPE.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
-  [FILTERS_TYPE.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
-  [FILTERS_TYPE.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
+  [FiltersType.ALL]: (films) => films,
+  [FiltersType.WATCHLIST]: (films) => films.filter((film) => film.userDetails.watchlist),
+  [FiltersType.HISTORY]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
+  [FiltersType.FAVORITES]: (films) => films.filter((film) => film.userDetails.favorite),
 };
 
 export {filter, getCountFilmsInFilters};

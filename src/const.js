@@ -10,21 +10,21 @@ const RATES = {
   MOVIE_BUFF: 'Movie Buff',
 };
 
-const FILTERS_TYPE = {
+const FiltersType = {
   ALL: 'all',
   WATCHLIST: 'watchlist',
   HISTORY: 'history',
   FAVORITES: 'favorites',
 };
 
-const EMPTY_TEXT = {
+const EmtyText = {
   ALL: 'There are no movies in our database',
   WATCHLIST: 'There are no watchlist movies now',
   HISTORY: 'There are no history movies now',
   FAVORITES: 'There are no favorite movies now',
 };
 
-const SORT_TYPE = {
+const SortType = {
   DEFAULT: 'default',
   DATE: 'date',
   RATING: 'rating',
@@ -117,10 +117,10 @@ export {
   COMMENTS,
   EMOTIONS,
   FILM_COUNT_PER_STEP,
-  FILTERS_TYPE,
+  FiltersType,
   RATES,
-  SORT_TYPE,
-  EMPTY_TEXT,
+  SortType,
+  EmtyText,
   UserAction,
   UpdateType,
 };

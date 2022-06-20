@@ -25,12 +25,13 @@ export default class FilmDetailsPresenter {
     return this.#isOpened;
   }
 
-  setDeleting = (id) => {
+  setDeleting = (id, scrollPosition) => {
     this.#filmDetailsView.updateElement({
       isDisabled: true,
       isDeleting: true,
       deletingComment: id,
     });
+    this.setScrollPosition(scrollPosition);
   };
 
   setSaving = (scrollPosition) => {
@@ -66,13 +67,6 @@ export default class FilmDetailsPresenter {
       this.#filmDetailsView = null;
     }
     this.#isOpened = false;
-  };
-
-  recoveryComment = () => {
-    this.#filmDetailsView.updateElement({
-      emotion: this.#film.emoji,
-      comment: this.#film.comment,
-    });
   };
 
   #renderDetails = () => {

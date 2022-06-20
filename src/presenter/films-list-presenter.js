@@ -13,7 +13,7 @@ import ShowMoreButtonView from '../view/show-more-button-view';
 import FilmMostView from '../view/film-most-view';
 import FilmListEmptyView from '../view/film-list-empty-view';
 import FooterStatView from '../view/footer-stat-view';
-import {FILM_COUNT_PER_STEP, TOP_RATED_FILMS, MOST_COMMENTS_FILMS, SORT_TYPE, FILTERS_TYPE, EMPTY_TEXT, UpdateType, UserAction} from '../const';
+import {FILM_COUNT_PER_STEP, TOP_RATED_FILMS, MOST_COMMENTS_FILMS, SortType, FiltersType, EmtyText, UpdateType, UserAction} from '../const';
 import dayjs from 'dayjs';
 import { filter } from '../utils/filter';
 
@@ -45,8 +45,8 @@ export default class FilmsListPresenter {
   #mostComment = null;
   #isLoading = true;
 
-  #currentFilter = FILTERS_TYPE.ALL;
-  #currentSort = SORT_TYPE.DEFAULT;
+  #currentFilter = FiltersType.ALL;
+  #currentSort = SortType.DEFAULT;
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
@@ -67,11 +67,11 @@ export default class FilmsListPresenter {
     const filtredFilms = filter[filterType](films);
 
     switch (this.#currentSort) {
-      case SORT_TYPE.RATING:
+      case SortType.RATING:
         return filtredFilms.sort((a, b) => b.filmInfo.rate - a.filmInfo.rate);
-      case SORT_TYPE.DATE:
+      case SortType.DATE:
         return filtredFilms.sort((a, b) => dayjs(b.filmInfo.release.date) - dayjs(a.filmInfo.release.date));
-      case SORT_TYPE.DEFAULT:
+      case SortType.DEFAULT:
       default:
         return filtredFilms;
     }
@@ -96,7 +96,7 @@ export default class FilmsListPresenter {
   };
 
   #renderUserRate = () => {
-    const rate = filter[FILTERS_TYPE.HISTORY](this.#filmsModel.films).length;
+    const rate = filter[FiltersType.HISTORY](this.#filmsModel.films).length;
     if(this.#userRate) {
       remove(this.#userRate);
       this.#userRate = new RateView(rate);
@@ -115,7 +115,7 @@ export default class FilmsListPresenter {
   };
 
   #rednerFilmListEmpty = () => {
-    const text = EMPTY_TEXT[this.#filterModel.filter.toUpperCase()];
+    const text = EmtyText[this.#filterModel.filter.toUpperCase()];
     this.#filmListEmpty = new FilmListEmptyView(text);
     render(this.#filmListEmpty, this.#filmList.element);
   };
@@ -199,7 +199,7 @@ export default class FilmsListPresenter {
     }
 
     if (resetSortType) {
-      this.#currentSort = SORT_TYPE.DEFAULT;
+      this.#currentSort = SortType.DEFAULT;
     }
   };
 
@@ -236,7 +236,7 @@ export default class FilmsListPresenter {
         }
         break;
       case UserAction.DELETE_COMMENT:
-        this.#filmDetailsPresenter.setDeleting(update.commentId);
+        this.#filmDetailsPresenter.setDeleting(update.commentId, scrollPosition);
         try{
           await this.#filmsModel.deleteComment(updateType, update);
         } catch {
@@ -259,7 +259,7 @@ export default class FilmsListPresenter {
   #onModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        if(this.#filterModel.filter === FILTERS_TYPE.ALL) {
+        if(this.#filterModel.filter === FiltersType.ALL) {
           this.#filmPresenters.get(data.id).forEach((presenter) => presenter.init(data));
         } else {
           this.#clearFilmsBoard();
