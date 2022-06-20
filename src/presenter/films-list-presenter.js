@@ -21,7 +21,7 @@ export default class FilmsListPresenter {
   #header = null;
   #footer = null;
   #filmsModel = null;
-  #commentsModel = null;
+  // #commentsModel = null;
   #filterModel = null;
 
   #filmDetailsPresenter = null;
@@ -45,17 +45,17 @@ export default class FilmsListPresenter {
   #currentSort = SORT_TYPE.DEFAULT;
   #renderedFilmCount = FILM_COUNT_PER_STEP;
 
-  constructor (container, header, footer, filmsModel, commentsModel, filterModel) {
+  constructor (container, header, footer, filmsModel, filterModel) {
     this.#mainSection = container;
     this.#header = header;
     this.#footer = footer;
     this.#filmsModel = filmsModel;
-    this.#commentsModel = commentsModel;
+    // this.#commentsModel = commentsModel;
     this.#filterModel = filterModel;
 
     this.#filmsModel.addObserver(this.#onModelEvent);
     this.#filterModel.addObserver(this.#onModelEvent);
-    this.#commentsModel.addObserver(this.#onModelEvent);
+    // this.#commentsModel.addObserver(this.#onModelEvent);
   }
 
   get films() {
@@ -214,7 +214,7 @@ export default class FilmsListPresenter {
       this.#closePopup();
     }
     this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
-    this.#filmDetailsPresenter.init(film, await this.#commentsModel.getСomments(film.id));
+    this.#filmDetailsPresenter.init(film, await this.#filmsModel.getСomments(film.id));
     this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
   };
 
@@ -224,10 +224,11 @@ export default class FilmsListPresenter {
         this.#filmsModel.updateFilm(updateType, update);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentsModel.deleteComment(updateType, update);
+        // console.log(update);
+        this.#filmsModel.deleteComment(updateType, update);
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentsModel.addComment(updateType, update);
+        this.#filmsModel.addComment(updateType, update);
         break;
     }
   };

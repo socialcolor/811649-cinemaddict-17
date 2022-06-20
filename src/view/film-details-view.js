@@ -2,7 +2,6 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 import {formatDate, formatTime} from '../utils/utils';
 import {setScrollPosition, getScrollPosition} from '../utils/film';
 import { EMOTIONS } from '../const';
-import dayjs from 'dayjs';
 import he from 'he';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
@@ -26,11 +25,6 @@ const createFilmDetailsTemplate = (film, filmComments) => {
      </div>
    </li>`);
 
-  const createLoadingErrorTemplate = () => (
-    `<li cclass="film-details__comment">
-    <p class="film-details__comment-text" style="color:red;">Comments loading error. Try again later</p>
-    </li>`);
-
   const createAddEmojiTemplate = (url) => `<img src="./images/emoji/${url}.png" width="55" height="55" alt="emoji-smile"></img>`;
 
   const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden"
@@ -41,13 +35,12 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 
   const comentsTemplate = () => {
     let commentsList = '';
-    if(filmComments.length) {
+    if(filmComments.length > 0) {
       for(const commentId of comments) {
         commentsList += createCommentTemplate(filmComments.find((it) => it.id === commentId));
       }
-      return commentsList;
     }
-    return createLoadingErrorTemplate();
+    return commentsList;
   };
 
   const createGenresList = filmInfo.genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('');
@@ -159,7 +152,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
     this.#comments = comments;
     this._state = FilmDetailsView.parseFilmToState(film);
-
     this.#setInnerHandler();
   }
 
@@ -233,22 +225,14 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #onAddCommentClick = (evt) => {
     if(evt.ctrlKey && evt.key === 'Enter' && this._state.comment && this._state.emoji) {
       evt.preventDefault();
-      const newComment =  {
-        id: this.#comments.length,
-        author: 'User',
-        comment: this._state.comment,
-        date: dayjs().toISOString(),
-        emotion: this._state.emoji,
-      };
-      this._state.comments.push(this.#comments.length);
-      this._callback.onAddCommentClick(FilmDetailsView.parseStateToFilm(this._state), newComment);
+      this._callback.onAddCommentClick(FilmDetailsView.parseStateToFilm(this._state));
     }
   };
 
   #onDeletingCommentClick = (evt) => {
     evt.preventDefault();
     if (evt.target.classList.contains('film-details__comment-delete')) {
-      this._callback.onDeletingCommentClick(evt.target.dataset.id);
+      this._callback.onDeletingCommentClick(FilmDetailsView.parseStateToFilm(this._state), evt.target.dataset.id);
     }
   };
 
@@ -281,16 +265,23 @@ export default class FilmDetailsView extends AbstractStatefulView {
   };
 
   static parseFilmToState = (film) => ({...film,
+    id: film.id,
     emoji: null,
     comment: null,
   });
 
   static parseStateToFilm = (state) => {
-    const film = {...state};
+    const localComment = {...state,
+      film: {...state.film},
+      localComment: {
+        emotion: state.emoji,
+        comment: state.comment,
+      }
+    };
 
-    delete film.emoji;
-    delete film.comment;
+    delete localComment.comment;
+    delete localComment.emoji;
 
-    return film;
+    return localComment;
   };
 }

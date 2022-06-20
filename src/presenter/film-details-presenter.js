@@ -79,14 +79,12 @@ export default class FilmDetailsPresenter {
     }
   };
 
-  #onAddCommentClick = (film, comment) => {
-    this.#changeData(UserAction.ADD_COMMENT, UpdateType.NO_UPDATE, comment);
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
+  #onAddCommentClick = (film) => {
+    this.#changeData(UserAction.ADD_COMMENT, UpdateType.PATCH, film);
   };
 
-  #onDeletClick = (id) => {
-    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.NO_UPDATE, id);
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, this.#deletingCommentInPopup(id));
+  #onDeletClick = (film, commentId) => {
+    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.PATCH, {...film, commentId: commentId});
   };
 
   #onWatchListClick = () => {

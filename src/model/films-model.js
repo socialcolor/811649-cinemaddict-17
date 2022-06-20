@@ -14,6 +14,8 @@ export default class FilmModel extends Observable {
     return this.#films;
   }
 
+  getСomments = (id) => this.#filmsApiServices.getComments(id);
+
   init = async () => {
     try {
       const films = await this.#filmsApiServices.films;
@@ -25,27 +27,64 @@ export default class FilmModel extends Observable {
   };
 
   updateFilm = async (updateType, update) => {
-    const index = this.#films.findIndex((film) => film.id === update.id);
+    try {
+      const response = await this.#filmsApiServices.updateFilm(update);
+      const updateFilm = this.#adaptToClient(response);
+
+      this.addFilms(updateFilm);
+
+      this._notify(updateType, updateFilm);
+    } catch(err) {
+      throw new Error(`Can't update film. Error >>> ${err}`);
+    }
+  };
+
+  addFilms = (update) => {
+    const index =  this.#films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting task');
     }
 
-    // this.#filmsApiServices.updateFilm(update);
+    this.#films = [
+      ...this.#films.slice(0, index),
+      update,
+      ...this.#films.slice(index + 1),
+    ];
+  };
+
+  addComment = async (updateType, update) => {
     try {
-      const response = await this.#filmsApiServices.updateFilm(update);
-      const updateFilm = this.#adaptToClient(response);
+      const response = await this.#filmsApiServices.addComment(update);
 
-      this.#films = [
-        ...this.#films.slice(0, index),
-        update,
-        ...this.#films.slice(index + 1),
-      ];
+      const film = this.#adaptToClient(response.movie);
 
-      this._notify(updateType, updateFilm);
+      this.addFilms(film);
+
+      this._notify(updateType, film);
     } catch(err) {
-      throw new Error(`Can't update film. ${err}`);
+      throw new Error(`Cant't add comment. Error >>> ${err}`);
     }
+  };
+
+  deleteComment = async (updateType, update) => {
+    const filmId = Number(update.id);
+
+    try {
+      await this.#filmsApiServices.deleteComment(update);
+    } catch(err) {
+      throw new Error(`Cant't delete comment. Error >>> ${err}`);
+    }
+
+    try {
+      const films = await this.#filmsApiServices.films;
+      this.#films = films.map(this.#adaptToClient);
+    } catch {
+      this.#films = [];
+    }
+
+    const index =  this.#films.findIndex((film) => Number(film.id) === filmId);
+    this._notify(updateType, this.#films[index]);
   };
 
   #adaptToClient = (film) => {
@@ -63,6 +102,7 @@ export default class FilmModel extends Observable {
         watchingDate: film.user_details.watching_date,
       }
     };
+
     delete adaptedFilm.film_info;
     delete adaptedFilm.filmInfo.alternative_title;
     delete adaptedFilm.filmInfo.age_rating;
