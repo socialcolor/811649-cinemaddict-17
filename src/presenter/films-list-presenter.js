@@ -269,14 +269,14 @@ export default class FilmsListPresenter {
           this.#clearFilmsBoard();
           this.#renderFilmsBoard();
         }
-        if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+        if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened && this.#filmDetailsPresenter.filmId === data.id) {
           this.#openPopup(data);
         }
         break;
       case UpdateType.MINOR:
         this.#clearFilmsBoard();
         this.#renderFilmsBoard();
-        if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+        if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened && this.#filmDetailsPresenter.filmId === data.id) {
           this.#openPopup(data);
         }
         break;
