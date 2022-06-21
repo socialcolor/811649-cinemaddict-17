@@ -162,7 +162,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     return createFilmDetailsTemplate(this._state, this.#comments);
   }
 
-  get localComment() {
+  get comment() {
     return {
       emoji: this._state.emoji,
       comment: this._state.comment,
@@ -211,10 +211,10 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   #setInnerHandler = () => {
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#onCommentChange);
-    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#onEmojiChange);
   };
 
-  #emojiHandler = (evt) => {
+  #onEmojiChange = (evt) => {
     if(evt.target.tagName === 'INPUT') {
       const emoji = evt.target.value;
       const scrollPosition = getScrollPosition(this.element);
@@ -224,6 +224,14 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
       setScrollPosition(this.element, scrollPosition);
     }
+  };
+
+  #onCommentChange = (evt) => {
+    evt.preventDefault();
+
+    this._setState({
+      comment: he.encode(evt.target.value),
+    });
   };
 
   #onAddCommentClick = (evt) => {
@@ -258,14 +266,6 @@ export default class FilmDetailsView extends AbstractStatefulView {
   #onFavoriteClick = (evt) => {
     evt.preventDefault();
     this._callback.onFavoriteClick(FilmDetailsView.parseStateToFilm(this._state));
-  };
-
-  #onCommentChange = (evt) => {
-    evt.preventDefault();
-
-    this._setState({
-      comment: he.encode(evt.target.value),
-    });
   };
 
   static parseFilmToState = (film) => ({...film,

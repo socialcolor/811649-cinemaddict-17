@@ -212,13 +212,17 @@ export default class FilmsListPresenter {
 
   #openPopup = async (film) => {
     let scrollPosition = null;
-    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened) {
+
+    if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened && this.#filmDetailsPresenter.filmId === film.id) {
       scrollPosition = this.#filmDetailsPresenter.getScrollPosition();
-      this.#closePopup();
+      this.#filmDetailsPresenter.init(await film, await this.#filmsModel.getСomments(film.id));
+      this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
+      return;
     }
+
+    this.#closePopup();
     this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
-    this.#filmDetailsPresenter.init(film, await this.#filmsModel.getСomments(film.id));
-    this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
+    this.#filmDetailsPresenter.init(await film, await this.#filmsModel.getСomments(film.id));
   };
 
   #onViewAction = async (actionType, updateType, update) => {
