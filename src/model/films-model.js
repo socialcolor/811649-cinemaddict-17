@@ -14,7 +14,7 @@ export default class FilmModel extends Observable {
     return this.#films;
   }
 
-  getСomments = (id) => this.#filmsApiServices.getComments(id);
+  getComments = (id) => this.#filmsApiServices.getComments(id);
 
   init = async () => {
     try {

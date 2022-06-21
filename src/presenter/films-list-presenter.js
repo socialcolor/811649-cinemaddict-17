@@ -215,14 +215,14 @@ export default class FilmsListPresenter {
 
     if(this.#filmDetailsPresenter && this.#filmDetailsPresenter.isOpened && this.#filmDetailsPresenter.filmId === film.id) {
       scrollPosition = this.#filmDetailsPresenter.getScrollPosition();
-      this.#filmDetailsPresenter.init(await film, await this.#filmsModel.getСomments(film.id));
+      this.#filmDetailsPresenter.init(await film, await this.#filmsModel.getComments(film.id));
       this.#filmDetailsPresenter.setScrollPosition(scrollPosition);
       return;
     }
 
     this.#closePopup();
     this.#filmDetailsPresenter = new FilmDetailsPresenter(this.#onViewAction);
-    this.#filmDetailsPresenter.init(await film, await this.#filmsModel.getСomments(film.id));
+    this.#filmDetailsPresenter.init(await film, await this.#filmsModel.getComments(film.id));
   };
 
   #onViewAction = async (actionType, updateType, update) => {
