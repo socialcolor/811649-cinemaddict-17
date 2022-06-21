@@ -36,7 +36,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
        <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
      </label>`).join('');
 
-  const comentsTemplate = () => {
+  const commentsTemplate = () => {
     let commentsList = '';
     if(filmComments.length > 0) {
       for(const commentId of comments) {
@@ -129,7 +129,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-          ${comentsTemplate()}
+          ${commentsTemplate()}
           </ul>
 
           <div class="film-details__new-comment">
