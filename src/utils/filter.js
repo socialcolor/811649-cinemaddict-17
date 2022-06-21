@@ -1,4 +1,4 @@
-import { FiltersType } from '../const';
+import { FiltersType  } from '../const';
 
 const getCountFilmsInFilters = (filters) => ({
   [FiltersType.ALL]: filters.find((it) => it.type === FiltersType.ALL).count,

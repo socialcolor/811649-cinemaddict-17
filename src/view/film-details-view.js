@@ -162,6 +162,13 @@ export default class FilmDetailsView extends AbstractStatefulView {
     return createFilmDetailsTemplate(this._state, this.#comments);
   }
 
+  get localComment() {
+    return {
+      emoji: this._state.emoji,
+      comment: this._state.comment,
+    };
+  }
+
   _restoreHandlers = () => {
     this.#setInnerHandler();
     this.setAddCommentHandler(this._callback.onAddCommentClick);

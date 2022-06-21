@@ -63,8 +63,8 @@ export default class FilmsListPresenter {
 
   get films() {
     const films = this.#filmsModel.films;
-    const filterType = this.#filterModel.filter;
-    const filtredFilms = filter[filterType](films);
+    const FiltersType = this.#filterModel.filter;
+    const filtredFilms = filter[FiltersType](films);
 
     switch (this.#currentSort) {
       case SortType.RATING:

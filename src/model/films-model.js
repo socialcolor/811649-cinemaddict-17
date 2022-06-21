@@ -31,26 +31,12 @@ export default class FilmModel extends Observable {
       const response = await this.#filmsApiServices.updateFilm(update);
       const updateFilm = this.#adaptToClient(response);
 
-      this.addFilms(updateFilm);
+      this.#addFilms(updateFilm);
 
       this._notify(updateType, updateFilm);
     } catch(err) {
       throw new Error(`Can't update film. Error >>> ${err}`);
     }
-  };
-
-  addFilms = (update) => {
-    const index =  this.#films.findIndex((film) => film.id === update.id);
-
-    if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
-    }
-
-    this.#films = [
-      ...this.#films.slice(0, index),
-      update,
-      ...this.#films.slice(index + 1),
-    ];
   };
 
   addComment = async (updateType, update) => {
@@ -59,7 +45,7 @@ export default class FilmModel extends Observable {
 
       const film = this.#adaptToClient(response.movie);
 
-      this.addFilms(film);
+      this.#addFilms(film);
 
       this._notify(updateType, film);
     } catch(err) {
@@ -78,6 +64,20 @@ export default class FilmModel extends Observable {
     } catch(err) {
       throw new Error(`Cant't delete comment. Error >>> ${err}`);
     }
+  };
+
+  #addFilms = (update) => {
+    const index =  this.#films.findIndex((film) => film.id === update.id);
+
+    if (index === -1) {
+      throw new Error('Can\'t update unexisting task');
+    }
+
+    this.#films = [
+      ...this.#films.slice(0, index),
+      update,
+      ...this.#films.slice(index + 1),
+    ];
   };
 
   #adaptToClient = (film) => {
