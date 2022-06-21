@@ -2,11 +2,13 @@ import AbstractView from '../framework/view/abstract-view';
 import {formatDate, formatTime} from '../utils/utils';
 
 const createFilmItemTemplate = (film) => {
+  const MAX_LENGTH_DESCRIPTION = 140;
+  const MAX_LENGTH_DISPLAY_DESCRIPTION = 139;
   const {filmInfo, comments, userDetails} = film;
   const watchlist = userDetails.watchlist ? 'film-card__controls-item--active' : '';
   const alreadyWatched = userDetails.alreadyWatched ? 'film-card__controls-item--active' : '';
   const favorite = userDetails.favorite ? 'film-card__controls-item--active' : '';
-  const description = filmInfo.description.length > 140 ? `${filmInfo.description.substring(0, 139)  }...` : filmInfo.description;
+  const description = filmInfo.description.length > MAX_LENGTH_DESCRIPTION ? `${filmInfo.description.substring(0, MAX_LENGTH_DISPLAY_DESCRIPTION)}...` : filmInfo.description;
   return `<article class="film-card">
      <a class="film-card__link">
        <h3 class="film-card__title">${filmInfo.title}</h3>
