@@ -150,11 +150,11 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 export default class FilmDetailsView extends AbstractStatefulView {
   #comments = null;
 
-  constructor (film, comments) {
+  constructor (film, comments, localComment = {emoji: null, comment: null}) {
     super();
 
     this.#comments = comments;
-    this._state = FilmDetailsView.parseFilmToState(film);
+    this._state = FilmDetailsView.parseFilmToState(film, localComment);
     this.#setInnerHandler();
   }
 
@@ -162,7 +162,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     return createFilmDetailsTemplate(this._state, this.#comments);
   }
 
-  get comment() {
+  get localComment() {
     return {
       emoji: this._state.emoji,
       comment: this._state.comment,
@@ -175,7 +175,7 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.setDeleteCommentHandler(this._callback.onDeletingCommentClick);
     this.setCloseButtonHandler(this._callback.onCloseButtonClick);
     this.setWatchlistHandler(this._callback.onWatchlistClick);
-    this.setWatchedHandler(this._callback.onWatchlistClick);
+    this.setWatchedHandler(this._callback.onWatchedClick);
     this.setFavoriteHandler(this._callback.onFavoriteClick);
   };
 
@@ -268,10 +268,10 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._callback.onFavoriteClick(FilmDetailsView.parseStateToFilm(this._state));
   };
 
-  static parseFilmToState = (film) => ({...film,
+  static parseFilmToState = (film, localComment) => ({...film,
     id: film.id,
-    emoji: null,
-    comment: null,
+    emoji: localComment.emoji,
+    comment: localComment.comment,
     isDisabled: false,
     isDeleting: false,
   });

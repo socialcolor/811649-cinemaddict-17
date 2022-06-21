@@ -227,7 +227,7 @@ export default class FilmsListPresenter {
 
   #onViewAction = async (actionType, updateType, update) => {
     this.#uiBlocker.block();
-    const scrollPosition = this.#filmDetailsPresenter.isOpened ? this.#filmDetailsPresenter.getScrollPosition() : null;
+    const scrollPosition = this.#filmDetailsPresenter?.isOpened ? this.#filmDetailsPresenter.getScrollPosition() : null;
     switch (actionType) {
       case UserAction.UPDATE_FILM:
         try {
