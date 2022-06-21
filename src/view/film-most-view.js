@@ -10,7 +10,6 @@ const createMostTemplate = (title) => (
 
 
 export default class FilmMostView extends AbstractView {
-  #film = null;
   #title = '';
 
   constructor (title) {

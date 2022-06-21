@@ -39,6 +39,10 @@ export default class FilmPresenter {
     remove(this.#filmView);
   };
 
+  setAborting = () => {
+    this.#filmView.shake();
+  };
+
   #onLinkClick = () => {
     this.#openPopup(this.#film);
   };
@@ -52,12 +56,12 @@ export default class FilmPresenter {
   #onWatchedClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, alreadyWatched: !userDetails.alreadyWatched}};
-    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
+    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.MINOR, change);
   };
 
   #onFavoriteClick = () => {
     const userDetails = this.#film.userDetails;
     const change = {...this.#film, userDetails: {...userDetails, favorite: !userDetails.favorite}};
-    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.PATCH, change);
+    this.#onViewAction(UserAction.UPDATE_FILM, UpdateType.MINOR, change);
   };
 }

@@ -1,7 +1,7 @@
 import {render, remove, replace, RenderPosition} from '../framework/render';
 import FilterView from '../view/film-filter-view';
 import {filter} from '../utils/filter';
-import {FILTERS_TYPE, UpdateType} from '../const';
+import {FiltersType, UpdateType} from '../const';
 
 export default class FilterPresenter {
   #container = null;
@@ -25,24 +25,24 @@ export default class FilterPresenter {
 
     return [
       {
-        type: FILTERS_TYPE.ALL,
+        type: FiltersType.ALL,
         name: 'All',
-        count: filter[FILTERS_TYPE.ALL](films).length,
+        count: filter[FiltersType.ALL](films).length,
       },
       {
-        type: FILTERS_TYPE.WATCHLIST,
+        type: FiltersType.WATCHLIST,
         name: 'Watchlist',
-        count: filter[FILTERS_TYPE.WATCHLIST](films).length,
+        count: filter[FiltersType.WATCHLIST](films).length,
       },
       {
-        type: FILTERS_TYPE.HISTORY,
+        type: FiltersType.HISTORY,
         name: 'Already Watched',
-        count: filter[FILTERS_TYPE.HISTORY](films).length,
+        count: filter[FiltersType.HISTORY](films).length,
       },
       {
-        type: FILTERS_TYPE.FAVORITES,
+        type: FiltersType.FAVORITES,
         name: 'Favorites',
-        count: filter[FILTERS_TYPE.FAVORITES](films).length,
+        count: filter[FiltersType.FAVORITES](films).length,
       },
     ];
   }

@@ -3,10 +3,12 @@ import {formatDate, formatTime} from '../utils/utils';
 import {setScrollPosition, getScrollPosition} from '../utils/film';
 import { EMOTIONS } from '../const';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import he from 'he';
 
 const createFilmDetailsTemplate = (film, filmComments) => {
-  const {filmInfo, comments, userDetails, emoji, comment} = film;
+  dayjs.extend(relativeTime);
+  const {filmInfo, comments, userDetails, emoji, comment, isDisabled, isDeleting} = film;
   const watchlist = userDetails.watchlist ? 'film-details__control-button--active' : '';
   const alreadyWatched = userDetails.alreadyWatched  ? 'film-details__control-button--active' : '';
   const favorite = userDetails.favorite ? 'film-details__control-button--active' : '';
@@ -20,34 +22,28 @@ const createFilmDetailsTemplate = (film, filmComments) => {
        <p class="film-details__comment-text">${data.comment}</p>
        <p class="film-details__comment-info">
          <span class="film-details__comment-author">${data.author}</span>
-         <span class="film-details__comment-day">${formatDate(data.date, 'YYYY/MM/DD HH:mm')}</span>
-         <button class="film-details__comment-delete" data-id="${data.id}">Delete</button>
+         <span class="film-details__comment-day">${dayjs(data.date).fromNow()}</span>
+         <button class="film-details__comment-delete" data-id="${data.id}">${isDeleting && data.id === film.deletingComment ? 'Deleting' : 'Delete'}</button>
        </p>
      </div>
    </li>`);
 
-  const createLoadingErrorTemplate = () => (
-    `<li cclass="film-details__comment">
-    <p class="film-details__comment-text" style="color:red;">Comments loading error. Try again later</p>
-    </li>`);
-
   const createAddEmojiTemplate = (url) => `<img src="./images/emoji/${url}.png" width="55" height="55" alt="emoji-smile"></img>`;
 
-  const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden"
-   name="comment-emoji" type="radio" id="emoji-${emotion}" value="${emotion}"} ${currentEmoji === emotion ? 'checked': ''}>
+  const createEmojiTemplate = (currentEmoji) => EMOTIONS.map((emotion) => `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio"
+   id="emoji-${emotion}" value="${emotion}" ${currentEmoji === emotion ? 'checked': ''} ${isDisabled ? 'disabled' : ''}>
      <label class="film-details__emoji-label" for="emoji-${emotion}">
        <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="${emotion}">
      </label>`).join('');
 
   const comentsTemplate = () => {
     let commentsList = '';
-    if(filmComments.length) {
+    if(filmComments.length > 0) {
       for(const commentId of comments) {
         commentsList += createCommentTemplate(filmComments.find((it) => it.id === commentId));
       }
-      return commentsList;
     }
-    return createLoadingErrorTemplate();
+    return commentsList;
   };
 
   const createGenresList = filmInfo.genre.map((genre) => `<span class="film-details__genre">${genre}</span>`).join('');
@@ -59,7 +55,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
   const genreTitleTemplate = filmInfo.genre.length > 1 ? 'Genres' : 'Genre';
 
   return  `<section class="film-details">
-    <form class="film-details__inner" action="" method="get">
+    <form class="film-details__inner" action="" method="get" ${isDisabled ? 'disabled' : ''}>
       <div class="film-details__top-container">
         <div class="film-details__close">
           <button class="film-details__close-btn" type="button">close</button>
@@ -122,9 +118,9 @@ const createFilmDetailsTemplate = (film, filmComments) => {
         </div>
 
         <section class="film-details__controls">
-          <button type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist}" data-name="watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
-          <button type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched}" data-name="alreadyWatched" id="watched" name="watched">Already watched</button>
-          <button type="button" class="film-details__control-button film-details__control-button--favorite ${favorite}" data-name="favorite" id="favorite" name="favorite">Add to favorites</button>
+          <button ${isDisabled ? 'disabled' : ''} type="button" class="film-details__control-button film-details__control-button--watchlist ${watchlist}" data-name="watchlist" id="watchlist" name="watchlist">Add to watchlist</button>
+          <button ${isDisabled ? 'disabled' : ''} type="button" class="film-details__control-button film-details__control-button--watched ${alreadyWatched}" data-name="alreadyWatched" id="watched" name="watched">Already watched</button>
+          <button ${isDisabled ? 'disabled' : ''} type="button" class="film-details__control-button film-details__control-button--favorite ${favorite}" data-name="favorite" id="favorite" name="favorite">Add to favorites</button>
         </section>
       </div>
 
@@ -140,7 +136,7 @@ const createFilmDetailsTemplate = (film, filmComments) => {
             <div class="film-details__add-emoji-label">${addEmojiTemplate}</div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${commentText}</textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}>${commentText}</textarea>
             </label>
 
             <div class="film-details__emoji-list">${emojiTemplate}</div>
@@ -154,17 +150,23 @@ const createFilmDetailsTemplate = (film, filmComments) => {
 export default class FilmDetailsView extends AbstractStatefulView {
   #comments = null;
 
-  constructor (film, comments) {
+  constructor (film, comments, localComment = {emoji: null, comment: null}) {
     super();
 
     this.#comments = comments;
-    this._state = FilmDetailsView.parseFilmToState(film);
-
+    this._state = FilmDetailsView.parseFilmToState(film, localComment);
     this.#setInnerHandler();
   }
 
   get template() {
     return createFilmDetailsTemplate(this._state, this.#comments);
+  }
+
+  get localComment() {
+    return {
+      emoji: this._state.emoji,
+      comment: this._state.comment,
+    };
   }
 
   _restoreHandlers = () => {
@@ -173,14 +175,8 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this.setDeleteCommentHandler(this._callback.onDeletingCommentClick);
     this.setCloseButtonHandler(this._callback.onCloseButtonClick);
     this.setWatchlistHandler(this._callback.onWatchlistClick);
-    this.setWatchedHandler(this._callback.onWatchlistClick);
+    this.setWatchedHandler(this._callback.onWatchedClick);
     this.setFavoriteHandler(this._callback.onFavoriteClick);
-  };
-
-  reset = (film) => {
-    this.updateElement(
-      FilmDetailsView.parseFilmToState(film),
-    );
   };
 
   setAddCommentHandler (callback) {
@@ -215,10 +211,10 @@ export default class FilmDetailsView extends AbstractStatefulView {
 
   #setInnerHandler = () => {
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#onCommentChange);
-    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#emojiHandler);
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#onEmojiChange);
   };
 
-  #emojiHandler = (evt) => {
+  #onEmojiChange = (evt) => {
     if(evt.target.tagName === 'INPUT') {
       const emoji = evt.target.value;
       const scrollPosition = getScrollPosition(this.element);
@@ -230,25 +226,25 @@ export default class FilmDetailsView extends AbstractStatefulView {
     }
   };
 
+  #onCommentChange = (evt) => {
+    evt.preventDefault();
+
+    this._setState({
+      comment: he.encode(evt.target.value),
+    });
+  };
+
   #onAddCommentClick = (evt) => {
     if(evt.ctrlKey && evt.key === 'Enter' && this._state.comment && this._state.emoji) {
       evt.preventDefault();
-      const newComment =  {
-        id: this.#comments.length,
-        author: 'User',
-        comment: this._state.comment,
-        date: dayjs().toISOString(),
-        emotion: this._state.emoji,
-      };
-      this._state.comments.push(this.#comments.length);
-      this._callback.onAddCommentClick(FilmDetailsView.parseStateToFilm(this._state), newComment);
+      this._callback.onAddCommentClick(FilmDetailsView.parseStateToFilm(this._state));
     }
   };
 
   #onDeletingCommentClick = (evt) => {
     evt.preventDefault();
     if (evt.target.classList.contains('film-details__comment-delete')) {
-      this._callback.onDeletingCommentClick(evt.target.dataset.id);
+      this._callback.onDeletingCommentClick(FilmDetailsView.parseStateToFilm(this._state), evt.target.dataset.id);
     }
   };
 
@@ -272,25 +268,28 @@ export default class FilmDetailsView extends AbstractStatefulView {
     this._callback.onFavoriteClick(FilmDetailsView.parseStateToFilm(this._state));
   };
 
-  #onCommentChange = (evt) => {
-    evt.preventDefault();
-
-    this._setState({
-      comment: he.encode(evt.target.value),
-    });
-  };
-
-  static parseFilmToState = (film) => ({...film,
-    emoji: null,
-    comment: null,
+  static parseFilmToState = (film, localComment) => ({...film,
+    id: film.id,
+    emoji: localComment.emoji,
+    comment: localComment.comment,
+    isDisabled: false,
+    isDeleting: false,
   });
 
   static parseStateToFilm = (state) => {
-    const film = {...state};
+    const localComment = {...state,
+      film: {...state.film},
+      localComment: {
+        emotion: state.emoji,
+        comment: state.comment,
+      }
+    };
 
-    delete film.emoji;
-    delete film.comment;
-
-    return film;
+    delete localComment.comment;
+    delete localComment.emoji;
+    delete localComment.isDisabled;
+    delete localComment.isDeleting;
+    delete localComment.commentId;
+    return localComment;
   };
 }

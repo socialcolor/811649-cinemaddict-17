@@ -9,6 +9,7 @@ export default class FilmDetailsPresenter {
   #isOpened = false;
 
   #filmDetailsView = null;
+  #scrollPosition = 0;
 
   constructor (controlsChange) {
     this.#changeData = controlsChange;
@@ -20,20 +21,46 @@ export default class FilmDetailsPresenter {
     this.#renderDetails();
   };
 
+  get filmId () {
+    return this.#film.id;
+  }
+
   get isOpened () {
     return this.#isOpened;
   }
 
+  setDeleting = (id, scrollPosition) => {
+    this.#filmDetailsView.updateElement({
+      isDisabled: true,
+      isDeleting: true,
+      deletingComment: id,
+    });
+    this.setScrollPosition(scrollPosition);
+  };
+
+  setSaving = (scrollPosition) => {
+    this.#filmDetailsView.updateElement({
+      isDisabled: true,
+      isDeleting: true,
+    });
+    this.setScrollPosition(scrollPosition);
+  };
+
+  setAborting = (scrollPosition) => {
+    const resetFormState = () => {
+      this.#filmDetailsView.updateElement({
+        isDisabled: false,
+        isDeleting: false,
+      });
+      this.setScrollPosition(scrollPosition);
+    };
+    this.setScrollPosition(scrollPosition);
+    this.#filmDetailsView.shake(resetFormState);
+  };
+
   getScrollPosition = () => this.#filmDetailsView.element.scrollTop;
 
-  setScrollPosition = (scrollPosition) => (this.#filmDetailsView.element.scrollTop = scrollPosition);
-
-  #deletingCommentInPopup = (id) => {
-    const index = this.#film.comments.findIndex((commentIndex) => Number(commentIndex) === Number(id));
-    const film = {...this.#film, comments: [...this.#film.comments]};
-    film.comments.splice(index, 1);
-    return film;
-  };
+  setScrollPosition = (scrollPosition) => (this.#filmDetailsView.element.scrollTop = scrollPosition ? scrollPosition : this.#scrollPosition);
 
   closePopup = () => {
     if(this.#filmDetailsView) {
@@ -48,12 +75,14 @@ export default class FilmDetailsPresenter {
 
   #renderDetails = () => {
     const prevFilmDetailsView = this.#filmDetailsView;
-    this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
 
-    if(prevFilmDetailsView === null) {
-      render(this.#filmDetailsView, document.body);
-    } else {
+    if(prevFilmDetailsView !== null) {
+      const localComment = this.#filmDetailsView.localComment;
+      this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments, localComment);
       replace(this.#filmDetailsView, prevFilmDetailsView);
+    } else {
+      this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
+      render(this.#filmDetailsView, document.body);
     }
 
     document.body.classList.add('hide-overflow');
@@ -79,14 +108,12 @@ export default class FilmDetailsPresenter {
     }
   };
 
-  #onAddCommentClick = (film, comment) => {
-    this.#changeData(UserAction.ADD_COMMENT, UpdateType.NO_UPDATE, comment);
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, film);
+  #onAddCommentClick = (film) => {
+    this.#changeData(UserAction.ADD_COMMENT, UpdateType.MINOR, film);
   };
 
-  #onDeletClick = (id) => {
-    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.NO_UPDATE, id);
-    this.#changeData(UserAction.UPDATE_FILM, UpdateType.MINOR, this.#deletingCommentInPopup(id));
+  #onDeletClick = (film, commentId) => {
+    this.#changeData(UserAction.DELETE_COMMENT, UpdateType.MINOR, {...film, commentId: commentId});
   };
 
   #onWatchListClick = () => {
