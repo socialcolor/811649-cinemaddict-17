@@ -1,5 +1,5 @@
 import {render, remove, replace, RenderPosition} from '../framework/render';
-import FilterView from '../view/film-filter-view';
+import FilmFilterView from '../view/film-filter-view';
 import {filter} from '../utils/filter';
 import {FiltersType, UpdateType} from '../const';
 
@@ -51,7 +51,7 @@ export default class FilterPresenter {
     const filters = this.filters;
     const prevFilterView = this.#filterView;
 
-    this.#filterView = new FilterView(filters, this.#filterModel.filter);
+    this.#filterView = new FilmFilterView(filters, this.#filterModel.filter);
     this.#filterView.setAllFilterHandler(this.#onFilterClick);
 
     if(prevFilterView === null) {

@@ -19,7 +19,7 @@ const createFilterTemplate = (filters, activeFilter) => {
   </nav>`;
 };
 
-export default class FilterView extends AbstractView {
+export default class FilmFilterView extends AbstractView {
   #filters = null;
   #activeFilter = null;
 
