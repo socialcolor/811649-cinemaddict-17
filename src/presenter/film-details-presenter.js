@@ -77,10 +77,10 @@ export default class FilmDetailsPresenter {
     const prevFilmDetailsView = this.#filmDetailsView;
 
     if(prevFilmDetailsView !== null) {
-      const filmInfo = this.#filmDetailsView.comment;
+      const localComment = this.#filmDetailsView.comment;
       this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
       replace(this.#filmDetailsView, prevFilmDetailsView);
-      this.#filmDetailsView.updateElement(filmInfo);
+      this.#filmDetailsView.updateElement(localComment);
     } else {
       this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
       render(this.#filmDetailsView, document.body);
