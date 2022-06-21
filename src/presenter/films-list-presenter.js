@@ -126,14 +126,14 @@ export default class FilmsListPresenter {
   };
 
   #renderExtraBlock = () => {
-    const topRateFimls = [...this.#filmsModel.films].sort((a, b) => b.filmInfo.rate - a.filmInfo.rate);
-    const mostCommentsFilms = [...this.#filmsModel.films].sort((a, b) => b.comments.length - a.comments.length);
+    const topRateFilms = [...this.#filmsModel.films].sort((a, b) => b.filmInfo.rate - a.filmInfo.rate).filter((film) => film.filmInfo.rate);
+    const mostCommentsFilms = [...this.#filmsModel.films].sort((a, b) => b.comments.length - a.comments.length).filter((film) => film.comments.length);
 
-    if(topRateFimls.length) {
+    if(topRateFilms.length) {
       this.#topRated = new FilmMostView('Top rated');
       render(this.#topRated, this.#filmSection.element);
-      for(let i = 0; i < Math.min(TOP_RATED_FILMS, topRateFimls.length); i++) {
-        this.#renderFilm(topRateFimls[i], this.#topRated.element.querySelector('.films-list__container'));
+      for(let i = 0; i < Math.min(TOP_RATED_FILMS, topRateFilms.length); i++) {
+        this.#renderFilm(topRateFilms[i], this.#topRated.element.querySelector('.films-list__container'));
       }
     }
 
