@@ -1,4 +1,4 @@
-import {render, remove} from '../framework/render';
+import {render, remove, replace} from '../framework/render';
 import FilmDetailsView from '../view/film-details-view';
 import {UserAction, UpdateType} from '../const.js';
 
@@ -77,16 +77,19 @@ export default class FilmDetailsPresenter {
     const prevFilmDetailsView = this.#filmDetailsView;
 
     if(prevFilmDetailsView !== null) {
-      this.#filmDetailsView.updateElement({
+      const filmInfo = {
         filmInfo: this.#film.filmInfo,
         userDetails: this.#film.userDetails,
         comments: this.#film.comments,
-      });
-      return;
+      };
+      this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
+      replace(this.#filmDetailsView, prevFilmDetailsView);
+      this.#filmDetailsView.updateElement(filmInfo);
+    } else {
+      this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
+      render(this.#filmDetailsView, document.body);
     }
 
-    this.#filmDetailsView = new FilmDetailsView(this.#film, this.#comments);
-    render(this.#filmDetailsView, document.body);
     document.body.classList.add('hide-overflow');
     document.addEventListener('keydown', this.#onEscKeyDown);
 
