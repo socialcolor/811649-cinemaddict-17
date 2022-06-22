@@ -251,6 +251,7 @@ export default class FilmsListPresenter {
         this.#filmDetailsPresenter.setSaving(scrollPosition);
         try{
           await this.#filmsModel.addComment(updateType, update);
+          this.#filmDetailsPresenter.clearLocalComment();
         } catch {
           this.#filmDetailsPresenter.setAborting(scrollPosition);
         }

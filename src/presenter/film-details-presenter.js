@@ -29,6 +29,10 @@ export default class FilmDetailsPresenter {
     return this.#isOpened;
   }
 
+  clearLocalComment = () => {
+    this.#filmDetailsView.updateElement({emoji: null, comment: null});
+  };
+
   setDeleting = (id, scrollPosition) => {
     this.#filmDetailsView.updateElement({
       isDisabled: true,
