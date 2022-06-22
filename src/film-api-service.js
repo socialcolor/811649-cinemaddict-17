@@ -24,9 +24,7 @@ export default class FilmApiService extends ApiService {
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    const parsedResponse = ApiService.parseResponse(response);
-
-    return parsedResponse;
+    return await ApiService.parseResponse(response);
   };
 
   addComment = async (film, localComment) => {
@@ -37,9 +35,7 @@ export default class FilmApiService extends ApiService {
       headers: new Headers({'Content-Type': 'application/json'}),
     });
 
-    const parsedResponse = ApiService.parseResponse(response);
-
-    return parsedResponse;
+    return await ApiService.parseResponse(response);
   };
 
   deleteComment = async (comment) => {
