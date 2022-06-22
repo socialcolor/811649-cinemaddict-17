@@ -284,8 +284,6 @@ export default class FilmsListPresenter {
         this.#clearFilmsBoard({resetRenderetFilmCount: true, resetSortType: true});
         this.#renderFilmsBoard();
         break;
-      case updateType.NO_UPDATE:
-        break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#filmLoading);

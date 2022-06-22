@@ -51,7 +51,6 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
-  NO_UPDATE: 'NO_UPDATE',
   INIT: 'INIT',
 };
 
