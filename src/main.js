@@ -4,7 +4,7 @@ import FilmsModel from './model/films-model';
 import FilterModel from './model/filter-model';
 import FilmsApiService from './film-api-service';
 
-const AUTHORIZATION = 'Basic testFilmAut1';
+const AUTHORIZATION = 'Basic testFilmAut100';
 const END_POINT = 'https://17.ecmascript.pages.academy/cinemaddict';
 
 const header = document.querySelector('.header');
